@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    expose:
+      - "8080"          # internal only — not published to the host
+    volumes:
+      - contacts-data:/data
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  contacts-data:

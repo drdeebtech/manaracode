@@ -1,0 +1,73 @@
+import { motion } from 'framer-motion'
+
+const row1 = [
+  { name: 'React',      color: '#61DAFB', bg: '#E8F9FD' },
+  { name: 'TypeScript', color: '#3178C6', bg: '#EBF3FB' },
+  { name: 'Node.js',    color: '#339933', bg: '#E8F5E9' },
+  { name: 'Python',     color: '#3776AB', bg: '#EBF3FB' },
+  { name: 'Next.js',    color: '#111827', bg: '#F3F4F6' },
+  { name: 'PostgreSQL', color: '#336791', bg: '#EBF3FB' },
+]
+
+const row2 = [
+  { name: 'Docker',     color: '#2496ED', bg: '#EBF7FF' },
+  { name: 'AWS',        color: '#FF9900', bg: '#FFF8E7' },
+  { name: 'MongoDB',    color: '#47A248', bg: '#E8F5E9' },
+  { name: 'Redis',      color: '#DC382D', bg: '#FDECEA' },
+  { name: 'GraphQL',    color: '#E10098', bg: '#FCE4F3' },
+  { name: 'Linux',      color: '#D48806', bg: '#FFFBE6' },
+]
+
+function Badge({ name, color, bg }) {
+  return (
+    <div
+      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-100 shadow-sm whitespace-nowrap mx-3 flex-shrink-0"
+      style={{ backgroundColor: bg }}
+    >
+      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      <span className="text-sm font-semibold text-gray-800">{name}</span>
+    </div>
+  )
+}
+
+function MarqueeRow({ items, direction = 'left' }) {
+  const doubled = [...items, ...items]
+  const cls = direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right'
+  return (
+    <div className="overflow-hidden">
+      <div className={`flex ${cls}`}>
+        {doubled.map((item, i) => (
+          <Badge key={`${item.name}-${i}`} {...item} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function TechStack() {
+  return (
+    <section className="py-20 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center"
+        >
+          <span className="text-sm font-semibold text-blue-500 tracking-widest uppercase mb-3 block">
+            Our Stack
+          </span>
+          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-blue-900">
+            Technologies We Master
+          </h2>
+        </motion.div>
+      </div>
+
+      <div className="space-y-4">
+        <MarqueeRow items={row1} direction="left" />
+        <MarqueeRow items={row2} direction="right" />
+      </div>
+    </section>
+  )
+}
