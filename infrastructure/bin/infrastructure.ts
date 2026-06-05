@@ -7,4 +7,9 @@ const app = new cdk.App();
 
 // Environment-agnostic: region/account resolved from AWS CLI profile or
 // CDK_DEFAULT_ACCOUNT / CDK_DEFAULT_REGION at deploy time.
-new ManaracodeStack(app, 'ManaracodeStack');
+new ManaracodeStack(app, 'ManaracodeStack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region:  process.env.CDK_DEFAULT_REGION,
+  },
+});
