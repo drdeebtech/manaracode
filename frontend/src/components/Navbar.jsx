@@ -53,13 +53,13 @@ export default function Navbar() {
 
         <a
           href="#contact"
-          className="hidden md:inline-flex px-5 py-2 bg-accent-warm text-white text-sm font-semibold rounded-xl transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+          className="hidden md:inline-flex items-center px-5 py-2 min-h-[44px] bg-accent-warm text-on-accent text-sm font-semibold rounded-xl transition-opacity duration-200 hover:opacity-90 cursor-pointer"
         >
           Get Started
         </a>
 
         <button
-          className="md:hidden text-muted cursor-pointer p-1"
+          className="md:hidden inline-flex min-h-[44px] min-w-[44px] items-center justify-center -mr-2 text-muted cursor-pointer"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -81,7 +81,7 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm font-medium text-muted hover:text-fg cursor-pointer"
+                  className="flex min-h-[44px] items-center text-sm font-medium text-muted hover:text-fg cursor-pointer"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -89,7 +89,7 @@ export default function Navbar() {
               ))}
               <a
                 href="#contact"
-                className="w-full py-2.5 bg-accent-warm text-white text-sm font-semibold rounded-xl text-center transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                className="w-full min-h-[44px] flex items-center justify-center bg-accent-warm text-on-accent text-sm font-semibold rounded-xl text-center transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                 onClick={() => setMenuOpen(false)}
               >
                 Get Started

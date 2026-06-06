@@ -22,6 +22,7 @@ export default {
           warm: 'var(--color-accent-warm)',
           soft: 'var(--color-accent-soft)',
         },
+        'on-accent': 'var(--color-on-accent)',
         success: {
           DEFAULT: 'var(--color-success)',
           soft: 'var(--color-success-soft)',

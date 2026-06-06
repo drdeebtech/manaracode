@@ -11,7 +11,23 @@ import { getGsap } from './gsapHooks'
 // controls own all interaction; this layer is aria-hidden.
 
 const GLOW_PAD = 1.6 // glow extends beyond the button
-const ACCENT = '#60a5fa'
+
+// Resolve a CSS custom property (e.g. an oklch token) to a parseable rgb()
+// string by letting the browser compute it — so the 3D layer matches the
+// active theme accent instead of a hardcoded color.
+function cssVarColor(varName, fallback) {
+  try {
+    const probe = document.createElement('span')
+    probe.style.color = `var(${varName}, ${fallback})`
+    probe.style.display = 'none'
+    document.body.appendChild(probe)
+    const rgb = getComputedStyle(probe).color
+    document.body.removeChild(probe)
+    return rgb || fallback
+  } catch {
+    return fallback
+  }
+}
 
 export class Engine {
   /** @param {HTMLCanvasElement} canvas */
@@ -26,6 +42,7 @@ export class Engine {
     this.running = false
     this.lastTime = 0
     this.pointer = { x: 0, y: 0 }
+    this.accent = cssVarColor('--color-accent', '#60a5fa') // matches the active theme
 
     this.resize = this.resize.bind(this)
     this.onVisibility = this.onVisibility.bind(this)
@@ -80,7 +97,7 @@ export class Engine {
     if (!anchor) return
     const group = new THREE.Group()
     const geo = new THREE.IcosahedronGeometry(1, 0)
-    const mat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.35, metalness: 0.6, flatShading: true })
+    const mat = new THREE.MeshStandardMaterial({ color: this.accent, roughness: 0.35, metalness: 0.6, flatShading: true })
     const mesh = new THREE.Mesh(geo, mat)
     group.add(mesh)
     group.add(new THREE.AmbientLight(0xffffff, 0.6))
@@ -113,7 +130,7 @@ export class Engine {
     // Add glows for new registrations.
     for (const [id] of entries) {
       if (!this.glows.has(id)) {
-        const mesh = createGlowMesh()
+        const mesh = createGlowMesh(this.accent)
         this.scene.add(mesh)
         this.glows.set(id, mesh)
       }

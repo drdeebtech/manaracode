@@ -38,6 +38,8 @@ python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack <stac
 
 **Hierarchical design system retrieval:** When building a specific page, check `design-system/pages/<page>.md` first; its rules override `design-system/MASTER.md`.
 
+**Active design system (read before UI work):** `design-system/manaracode/MASTER.md` is the committed source of truth for this project (dark, motion-driven dev-studio system).
+
 ## Pre-Delivery UI Checklist
 
 Before delivering any UI code:

@@ -18,12 +18,11 @@ const row2 = [
   { name: 'Linux',      color: '#D48806', bg: '#FFFBE6' },
 ]
 
-function Badge({ name, color, bg }) {
+function Badge({ name, color }) {
   return (
-    <div
-      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border shadow-sm whitespace-nowrap mx-3 flex-shrink-0"
-      style={{ backgroundColor: bg }}
-    >
+    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border bg-neutral-soft shadow-sm whitespace-nowrap mx-3 flex-shrink-0">
+      {/* Brand-colored dot stays; the chip surface is a theme token so the
+          near-white label is readable in dark (hardcoded light bg was invisible). */}
       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
       <span className="text-sm font-semibold text-fg">{name}</span>
     </div>

@@ -4,9 +4,9 @@
  * tailwind.config.js: bg-surface, text-fg, border-border, ring-ring, etc.),
  * never hardcoded color ramps.
  *
- * Light is the default. The dark / maximalist direction (DESIGN.md) activates
- * by setting `data-theme="dark"` on <html> (a later phase) — every token below
- * has a dark override, so no component code changes when the theme flips.
+ * The dark / maximalist direction (DESIGN.md) is ACTIVE — `data-theme="dark"`
+ * is set on <html> (index.html). Every token has a dark override and a light
+ * fallback, so flipping the attribute swaps the whole theme with no code changes.
  */
 
 :root {
@@ -21,6 +21,7 @@
   /* Accents */
   --color-accent: #2563eb;
   --color-accent-warm: #22c55e; /* primary CTA fill */
+  --color-on-accent: #0b1220; /* readable text on accent-warm fills (light/medium in both themes) */
 
   /* Semantic (foreground/icon strength) */
   --color-success: #16a34a;

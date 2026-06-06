@@ -28,10 +28,11 @@ const BASE =
 
 const VARIANTS = {
   // `webgl` renders identically to `primary` at the DOM level; the optional 3D
-  // mesh is decorative and layered behind it (later phase). Tokens only — see
-  // styles/tokens.css. Transitions stay on opacity (compositor-friendly).
-  primary: 'bg-accent-warm text-white',
-  webgl: 'bg-accent-warm text-white',
+  // mesh is decorative and layered behind it. Tokens only — see styles/tokens.css.
+  // Transitions stay on opacity (compositor-friendly). text-on-accent is dark so
+  // it stays readable on the light/medium accent-warm fill (white fails ~1.7:1).
+  primary: 'bg-accent-warm text-on-accent',
+  webgl: 'bg-accent-warm text-on-accent',
   secondary: 'border-2 border-accent text-accent bg-transparent hover:bg-accent-soft',
   ghost: 'text-accent bg-transparent hover:bg-accent-soft',
 }
