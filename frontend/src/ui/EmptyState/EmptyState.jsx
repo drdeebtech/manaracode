@@ -12,9 +12,9 @@ import { cn } from '../../lib/cn'
  */
 
 const TONE_ICON = {
-  empty: 'bg-blue-50 text-blue-500',
-  success: 'bg-green-100 text-green-500',
-  error: 'bg-red-100 text-red-500',
+  empty: 'bg-neutral-soft text-accent',
+  success: 'bg-success-soft text-success',
+  error: 'bg-error-soft text-error',
 }
 
 /**
@@ -50,8 +50,8 @@ export function EmptyState({
           <Icon className="h-8 w-8" aria-hidden="true" />
         </div>
       )}
-      <Heading className="font-heading text-xl font-bold text-blue-900 mb-2">{title}</Heading>
-      {description && <p className="max-w-sm text-sm text-blue-600">{description}</p>}
+      <Heading className="font-heading text-xl font-bold text-fg mb-2">{title}</Heading>
+      {description && <p className="max-w-sm text-sm text-muted">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   )

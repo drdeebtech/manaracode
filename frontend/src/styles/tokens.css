@@ -1,25 +1,39 @@
 /*
- * Design tokens — additive groundwork for the design system.
+ * Design tokens — the single source of truth for color, space, radius, and
+ * motion. Components consume these via Tailwind semantic utilities (see
+ * tailwind.config.js: bg-surface, text-fg, border-border, ring-ring, etc.),
+ * never hardcoded color ramps.
  *
- * These variables are introduced now (Phase 1) without changing the current
- * light theme. The dark / maximalist direction (DESIGN.md) is applied in a
- * later phase by switching the values under a `[data-theme="dark"]` scope and
- * flipping the body. Defining them here lets primitives reference tokens
- * instead of hardcoding values as the system matures.
+ * Light is the default. The dark / maximalist direction (DESIGN.md) activates
+ * by setting `data-theme="dark"` on <html> (a later phase) — every token below
+ * has a dark override, so no component code changes when the theme flips.
  */
 
 :root {
-  /* Color — current light palette expressed as tokens (no visual change) */
+  /* Core surfaces & text */
   --color-bg: #eff6ff;
   --color-surface: #ffffff;
-  --color-text: #1e3a8a;
-  --color-text-muted: #3b82f6;
+  --color-text: #1e3a8a; /* fg */
+  --color-text-muted: #2563eb; /* muted */
+  --color-border: #dbeafe;
+  --color-ring: #60a5fa;
+
+  /* Accents */
   --color-accent: #2563eb;
-  --color-accent-warm: #22c55e;
-  --color-success: #22c55e;
-  --color-warning: #e0a830;
+  --color-accent-warm: #22c55e; /* primary CTA fill */
+
+  /* Semantic (foreground/icon strength) */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
   --color-error: #ef4444;
   --color-info: #2563eb;
+
+  /* Soft tints — chip backgrounds, icon halos, skeleton */
+  --color-neutral-soft: #dbeafe;
+  --color-accent-soft: #dbeafe;
+  --color-success-soft: #dcfce7;
+  --color-warning-soft: #fef3c7;
+  --color-error-soft: #fee2e2;
 
   /* Spacing — 8px base */
   --space-2xs: 4px;
@@ -46,20 +60,33 @@
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Elevation / layering */
-  --z-base: 0;
+  /* Layering */
   --z-canvas: -1;
   --z-overlay: 50;
   --z-modal: 60;
   --z-toast: 70;
 }
 
-/* Dark theme values — not active until a later phase sets data-theme="dark". */
+/* Dark theme — DESIGN.md direction. Inactive until data-theme="dark" is set. */
 [data-theme='dark'] {
   --color-bg: oklch(13% 0.02 265);
   --color-surface: oklch(18% 0.02 265);
   --color-text: oklch(96% 0 0);
   --color-text-muted: oklch(72% 0.02 265);
+  --color-border: oklch(28% 0.02 265);
+  --color-ring: oklch(64% 0.19 255);
+
   --color-accent: oklch(64% 0.19 255);
   --color-accent-warm: oklch(82% 0.17 95);
+
+  --color-success: oklch(72% 0.17 150);
+  --color-warning: oklch(80% 0.15 80);
+  --color-error: oklch(64% 0.21 25);
+  --color-info: oklch(64% 0.19 255);
+
+  --color-neutral-soft: oklch(24% 0.02 265);
+  --color-accent-soft: oklch(28% 0.06 255);
+  --color-success-soft: oklch(28% 0.06 150);
+  --color-warning-soft: oklch(30% 0.06 80);
+  --color-error-soft: oklch(28% 0.08 25);
 }

@@ -23,16 +23,17 @@ import { Spinner } from '../Spinner/Spinner'
 
 const BASE =
   'relative inline-flex items-center justify-center gap-2 font-semibold rounded-xl cursor-pointer ' +
-  'transition-[color,background-color,opacity] duration-200 disabled:opacity-60 disabled:cursor-not-allowed ' +
+  'transition-opacity duration-200 hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed ' +
   FOCUS_RING
 
 const VARIANTS = {
   // `webgl` renders identically to `primary` at the DOM level; the optional 3D
-  // mesh is decorative and layered behind it (later phase).
-  primary: 'bg-green-500 hover:bg-green-600 text-white',
-  webgl: 'bg-green-500 hover:bg-green-600 text-white',
-  secondary: 'border-2 border-blue-200 text-blue-800 hover:bg-blue-50 bg-transparent',
-  ghost: 'text-blue-700 hover:bg-blue-50 bg-transparent',
+  // mesh is decorative and layered behind it (later phase). Tokens only — see
+  // styles/tokens.css. Transitions stay on opacity (compositor-friendly).
+  primary: 'bg-accent-warm text-white',
+  webgl: 'bg-accent-warm text-white',
+  secondary: 'border-2 border-accent text-accent bg-transparent hover:bg-accent-soft',
+  ghost: 'text-accent bg-transparent hover:bg-accent-soft',
 }
 
 const SIZES = {

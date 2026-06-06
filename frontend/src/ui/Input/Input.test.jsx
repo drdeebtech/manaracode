@@ -28,6 +28,16 @@ describe('Input', () => {
     expect(screen.getByLabelText(/email/i)).toHaveAttribute('dir', 'ltr')
   })
 
+  it('defaults type=email to dir=ltr when dir is not provided', () => {
+    render(<Input label="Email" name="email" type="email" />)
+    expect(screen.getByLabelText(/email/i)).toHaveAttribute('dir', 'ltr')
+  })
+
+  it('leaves dir unset for plain text fields', () => {
+    render(<Input label="Name" name="name" type="text" />)
+    expect(screen.getByLabelText(/name/i)).not.toHaveAttribute('dir')
+  })
+
   it('marks required on the control', () => {
     render(<Input label="Email" name="email" required />)
     expect(screen.getByLabelText(/email/i)).toBeRequired()

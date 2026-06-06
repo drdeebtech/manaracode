@@ -16,9 +16,13 @@ import { useId } from '../../hooks/useId'
  */
 
 const FIELD =
-  'w-full px-4 py-3 rounded-xl border text-blue-900 text-sm placeholder-blue-300 ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ' +
+  'w-full px-4 py-3 rounded-xl border bg-surface text-fg text-sm placeholder:text-muted ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
   'disabled:opacity-60 disabled:cursor-not-allowed'
+
+// Fields whose content is inherently left-to-right; default dir="ltr" so they
+// enter correctly on an RTL page unless the caller overrides.
+const LTR_TYPES = new Set(['email', 'password', 'url', 'tel'])
 
 /**
  * Labelled text input with hint and error wiring.
@@ -26,29 +30,30 @@ const FIELD =
  * @type {React.ForwardRefExoticComponent<InputOwnProps & React.InputHTMLAttributes<HTMLInputElement>>}
  */
 export const Input = forwardRef(function Input(
-  { label, name, id, type = 'text', error, hint, required = false, hideLabel = false, className, ...rest },
+  { label, name, id, type = 'text', error, hint, required = false, hideLabel = false, dir, className, ...rest },
   ref,
 ) {
   const fieldId = useId(id)
   const errorId = `${fieldId}-error`
   const hintId = `${fieldId}-hint`
   const describedBy = cn(hint && hintId, error && errorId) || undefined
+  const resolvedDir = dir || (LTR_TYPES.has(type) ? 'ltr' : undefined)
 
   return (
     <div className="w-full">
       <label
         htmlFor={fieldId}
-        className={cn('block text-sm font-semibold text-blue-900 mb-1.5', hideLabel && 'sr-only')}
+        className={cn('block text-sm font-semibold text-fg mb-1.5 cursor-pointer', hideLabel && 'sr-only')}
       >
         {label}
         {required && (
-          <span className="text-red-500" aria-hidden="true">
+          <span className="text-error" aria-hidden="true">
             {' *'}
           </span>
         )}
       </label>
       {hint && (
-        <p id={hintId} className="text-xs text-blue-400 mb-1.5">
+        <p id={hintId} className="text-xs text-muted mb-1.5">
           {hint}
         </p>
       )}
@@ -57,14 +62,15 @@ export const Input = forwardRef(function Input(
         id={fieldId}
         name={name}
         type={type}
+        dir={resolvedDir}
         required={required}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={describedBy}
-        className={cn(FIELD, error ? 'border-red-300' : 'border-blue-100', className)}
+        className={cn(FIELD, error ? 'border-error' : 'border-border', className)}
         {...rest}
       />
       {error && (
-        <p id={errorId} className="mt-1.5 text-xs text-red-500">
+        <p id={errorId} className="mt-1.5 text-xs text-error">
           {error}
         </p>
       )}

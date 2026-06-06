@@ -18,8 +18,13 @@ export function useReducedMotion() {
     const mql = window.matchMedia(QUERY)
     setReduced(mql.matches)
     const onChange = (e) => setReduced(e.matches)
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
+    // addEventListener is modern; fall back to addListener for Safari < 14.
+    if (mql.addEventListener) {
+      mql.addEventListener('change', onChange)
+      return () => mql.removeEventListener('change', onChange)
+    }
+    mql.addListener(onChange)
+    return () => mql.removeListener(onChange)
   }, [])
 
   return reduced

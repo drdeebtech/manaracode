@@ -6,12 +6,14 @@ import { cn } from '../../lib/cn'
  * @property {string} [className]
  */
 
+// Soft token background + fg text keeps contrast safe in both themes; tone is
+// carried by the background.
 const TONES = {
-  neutral: 'bg-blue-50 text-blue-700',
-  accent: 'bg-blue-100 text-blue-800',
-  success: 'bg-green-100 text-green-700',
-  warning: 'bg-amber-100 text-amber-800',
-  error: 'bg-red-100 text-red-700',
+  neutral: 'bg-neutral-soft text-muted',
+  accent: 'bg-accent-soft text-fg',
+  success: 'bg-success-soft text-fg',
+  warning: 'bg-warning-soft text-fg',
+  error: 'bg-error-soft text-fg',
 }
 
 /**

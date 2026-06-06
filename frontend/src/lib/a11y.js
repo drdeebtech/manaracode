@@ -7,7 +7,7 @@
  * matching the project's "transitions on transform/opacity only" rule.
  */
 export const FOCUS_RING =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2'
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
 
 /** Visually hidden but available to screen readers. */
 export const SR_ONLY = 'sr-only'

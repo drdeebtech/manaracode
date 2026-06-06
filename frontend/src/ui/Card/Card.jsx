@@ -9,9 +9,9 @@ import { cn } from '../../lib/cn'
  */
 
 const VARIANTS = {
-  default: 'bg-white border border-blue-100',
-  outlined: 'bg-transparent border border-blue-200',
-  elevated: 'bg-white shadow-xl shadow-blue-950/10 border border-blue-50',
+  default: 'bg-surface border border-border',
+  outlined: 'bg-transparent border border-border',
+  elevated: 'bg-surface shadow-xl shadow-black/10 border border-border',
 }
 
 const PADDING = { sm: 'p-4', md: 'p-6', lg: 'p-8' }

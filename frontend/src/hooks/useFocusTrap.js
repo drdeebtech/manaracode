@@ -23,6 +23,11 @@ export function useFocusTrap(active) {
       )
 
     const initial = focusables()[0] || container
+    // A bare container isn't focusable without a tabindex; add one so the
+    // fallback focus() actually lands (and the trap holds on the first Tab).
+    if (initial === container && !container.hasAttribute('tabindex')) {
+      container.setAttribute('tabindex', '-1')
+    }
     initial.focus()
 
     const onKeyDown = (e) => {

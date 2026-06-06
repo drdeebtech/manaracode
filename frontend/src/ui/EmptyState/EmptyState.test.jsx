@@ -21,7 +21,13 @@ describe('EmptyState', () => {
   })
 
   it('renders an action and a decorative icon', () => {
-    render(<EmptyState Icon={Inbox} title="Empty" action={<button>Refresh</button>} />)
+    const { container } = render(
+      <EmptyState Icon={Inbox} title="Empty" action={<button>Refresh</button>} />,
+    )
     expect(screen.getByRole('button', { name: /refresh/i })).toBeInTheDocument()
+    // The Lucide icon renders an SVG and is decorative (aria-hidden).
+    const svg = container.querySelector('svg')
+    expect(svg).toBeInTheDocument()
+    expect(svg).toHaveAttribute('aria-hidden', 'true')
   })
 })

@@ -20,7 +20,7 @@ export function Skeleton({ width, height, circle = false, className, style, ...r
     <span
       aria-hidden="true"
       className={cn(
-        'block animate-pulse bg-blue-100/70 motion-reduce:animate-none',
+        'block animate-pulse bg-neutral-soft motion-reduce:animate-none',
         circle ? 'rounded-full' : 'rounded-md',
         className,
       )}
