@@ -70,6 +70,15 @@ Key routing rules:
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
 
+## GBrain Configuration (configured by /setup-gbrain)
+- Mode: local-stdio
+- Engine: pglite
+- Config file: ~/.gbrain/config.json (mode 0600)
+- Setup date: 2026-06-06
+- MCP registered: yes (user scope)
+- Artifacts sync: full to https://github.com/drdeebtech/gstack-artifacts-drdeeb
+- Current repo policy: read-write
+
 ## GBrain Search Guidance (configured by /sync-gbrain)
 <!-- gstack-gbrain-search-guidance:start -->
 
