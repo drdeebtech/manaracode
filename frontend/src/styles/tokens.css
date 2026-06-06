@@ -1,0 +1,65 @@
+/*
+ * Design tokens — additive groundwork for the design system.
+ *
+ * These variables are introduced now (Phase 1) without changing the current
+ * light theme. The dark / maximalist direction (DESIGN.md) is applied in a
+ * later phase by switching the values under a `[data-theme="dark"]` scope and
+ * flipping the body. Defining them here lets primitives reference tokens
+ * instead of hardcoding values as the system matures.
+ */
+
+:root {
+  /* Color — current light palette expressed as tokens (no visual change) */
+  --color-bg: #eff6ff;
+  --color-surface: #ffffff;
+  --color-text: #1e3a8a;
+  --color-text-muted: #3b82f6;
+  --color-accent: #2563eb;
+  --color-accent-warm: #22c55e;
+  --color-success: #22c55e;
+  --color-warning: #e0a830;
+  --color-error: #ef4444;
+  --color-info: #2563eb;
+
+  /* Spacing — 8px base */
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Motion (mirror of tokens.js; ms here) */
+  --duration-micro: 80ms;
+  --duration-short: 200ms;
+  --duration-medium: 350ms;
+  --duration-long: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Elevation / layering */
+  --z-base: 0;
+  --z-canvas: -1;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+}
+
+/* Dark theme values — not active until a later phase sets data-theme="dark". */
+[data-theme='dark'] {
+  --color-bg: oklch(13% 0.02 265);
+  --color-surface: oklch(18% 0.02 265);
+  --color-text: oklch(96% 0 0);
+  --color-text-muted: oklch(72% 0.02 265);
+  --color-accent: oklch(64% 0.19 255);
+  --color-accent-warm: oklch(82% 0.17 95);
+}
