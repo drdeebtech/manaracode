@@ -57,6 +57,13 @@ export class ManaracodeStack extends cdk.Stack {
       'set -euo pipefail',
       'exec > >(tee /var/log/userdata.log) 2>&1',
       'echo "=== UserData start ==="',
+      // 2GB swap — t3.micro has 1GB RAM; Docker builds/pulls without swap
+      // caused hard freezes on the previous server (OOM "Deep Freeze").
+      'fallocate -l 2G /swapfile',
+      'chmod 600 /swapfile',
+      'mkswap /swapfile',
+      'swapon /swapfile',
+      'echo "/swapfile none swap sw 0 0" >> /etc/fstab',
       'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y',
       // Docker (official install script)
       'curl -fsSL https://get.docker.com | sh',
