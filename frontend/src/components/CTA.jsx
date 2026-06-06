@@ -9,8 +9,11 @@ const benefits = [
   { Icon: Mail,   text: 'No commitment required' },
 ]
 
+// Focus ring is a box-shadow (not compositor-friendly), so it appears instantly
+// rather than animating — per the project UI checklist (transitions on transform/
+// opacity only).
 const inputClass =
-  'w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200'
+  'w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300'
 
 export default function CTA() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -79,7 +82,7 @@ export default function CTA() {
 
             <a
               href="mailto:contact@manaracode.com"
-              className="inline-flex items-center gap-2 text-blue-300 hover:text-white text-sm transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center gap-2 text-blue-300 hover:text-white text-sm cursor-pointer"
             >
               <Mail className="w-4 h-4" />
               contact@manaracode.com
@@ -131,6 +134,7 @@ export default function CTA() {
                     name="email"
                     type="email"
                     required
+                    dir="ltr"
                     value={form.email}
                     onChange={handleChange}
                     placeholder="john@company.com"
@@ -161,7 +165,7 @@ export default function CTA() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3.5 bg-green-500 hover:bg-green-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors duration-200 cursor-pointer text-sm"
+                  className="w-full py-3.5 bg-green-500 hover:bg-green-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-opacity duration-200 cursor-pointer text-sm"
                 >
                   {submitting ? 'Sending…' : 'Send Message →'}
                 </button>
