@@ -21,11 +21,11 @@ const row2 = [
 function Badge({ name, color, bg }) {
   return (
     <div
-      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-100 shadow-sm whitespace-nowrap mx-3 flex-shrink-0"
+      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border shadow-sm whitespace-nowrap mx-3 flex-shrink-0"
       style={{ backgroundColor: bg }}
     >
       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-      <span className="text-sm font-semibold text-gray-800">{name}</span>
+      <span className="text-sm font-semibold text-fg">{name}</span>
     </div>
   )
 }
@@ -46,7 +46,7 @@ function MarqueeRow({ items, direction = 'left' }) {
 
 export default function TechStack() {
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-20 bg-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,10 +55,10 @@ export default function TechStack() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="text-sm font-semibold text-blue-500 tracking-widest uppercase mb-3 block">
+          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             Our Stack
           </span>
-          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-blue-900">
+          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-fg">
             Technologies We Master
           </h2>
         </motion.div>

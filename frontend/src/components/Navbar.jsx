@@ -26,13 +26,13 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`fixed top-4 left-4 right-4 z-50 rounded-2xl transition-all duration-300 ${
         scrolled
-          ? 'bg-white/90 backdrop-blur-md shadow-lg shadow-blue-900/8 border border-blue-100'
-          : 'bg-white/70 backdrop-blur-sm border border-white/60'
+          ? 'bg-surface backdrop-blur-md shadow-lg shadow-black/20 border border-border'
+          : 'bg-surface backdrop-blur-sm border border-border'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2 font-heading font-bold text-blue-900">
-          <div className="w-8 h-8 bg-blue-800 rounded-lg flex items-center justify-center flex-shrink-0">
+        <a href="#" className="flex items-center gap-2 font-heading font-bold text-fg">
+          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
             <Code2 className="w-4 h-4 text-white" />
           </div>
           <span className="text-lg tracking-tight">manaracode</span>
@@ -43,7 +43,7 @@ export default function Navbar() {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer"
+                className="text-sm font-medium text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
               >
                 {link.label}
               </a>
@@ -53,13 +53,13 @@ export default function Navbar() {
 
         <a
           href="#contact"
-          className="hidden md:inline-flex px-5 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-xl transition-colors duration-200 cursor-pointer"
+          className="hidden md:inline-flex px-5 py-2 bg-accent-warm text-white text-sm font-semibold rounded-xl transition-opacity duration-200 hover:opacity-90 cursor-pointer"
         >
           Get Started
         </a>
 
         <button
-          className="md:hidden text-blue-800 cursor-pointer p-1"
+          className="md:hidden text-muted cursor-pointer p-1"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -74,14 +74,14 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden border-t border-blue-100 px-5 pb-5"
+            className="md:hidden overflow-hidden border-t border-border px-5 pb-5"
           >
             <div className="pt-4 flex flex-col gap-4">
               {links.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm font-medium text-blue-700 hover:text-blue-900 cursor-pointer"
+                  className="text-sm font-medium text-muted hover:text-fg cursor-pointer"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -89,7 +89,7 @@ export default function Navbar() {
               ))}
               <a
                 href="#contact"
-                className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-xl text-center transition-colors duration-200 cursor-pointer"
+                className="w-full py-2.5 bg-accent-warm text-white text-sm font-semibold rounded-xl text-center transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                 onClick={() => setMenuOpen(false)}
               >
                 Get Started
