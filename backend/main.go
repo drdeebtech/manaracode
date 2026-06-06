@@ -14,6 +14,7 @@ import (
 type server struct {
 	store   *Store
 	limiter *RateLimiter
+	mailer  Mailer
 }
 
 func main() {
@@ -32,9 +33,19 @@ func main() {
 	}
 	defer store.Close()
 
+	mailer := newMailer(
+		os.Getenv("SMTP_HOST"),
+		os.Getenv("SMTP_PORT"),
+		os.Getenv("SMTP_USER"),
+		os.Getenv("SMTP_PASS"),
+		os.Getenv("SMTP_FROM"),
+		os.Getenv("NOTIFY_TO"),
+	)
+
 	srv := &server{
 		store:   store,
 		limiter: NewRateLimiter(),
+		mailer:  mailer,
 	}
 
 	mux := http.NewServeMux()

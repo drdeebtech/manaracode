@@ -65,6 +65,12 @@ func (s *server) handleContact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("contact saved", "name", req.Name, "email", req.Email, "ip", ip)
+
+	if err := s.mailer.SendContactNotification(req.Name, req.Email, req.Message); err != nil {
+		// Non-fatal: contact is saved; email failure is logged but not surfaced to the user.
+		slog.Error("send notification email", "err", err, "name", req.Name)
+	}
+
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 
