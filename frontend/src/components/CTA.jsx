@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, Mail, Clock, Shield } from 'lucide-react'
+import { postContact } from '../lib/api'
 
 const benefits = [
   { Icon: Clock,  text: 'Response within 24 hours' },
   { Icon: Shield, text: 'Free initial consultation' },
   { Icon: Mail,   text: 'No commitment required' },
 ]
+
+const inputClass =
+  'w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200'
 
 export default function CTA() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -23,11 +27,7 @@ export default function CTA() {
     setSubmitting(true)
     setError('')
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
+      const res = await postContact(form)
       if (res.status === 429) {
         setError('Too many requests. Please wait a minute and try again.')
         return
@@ -118,7 +118,7 @@ export default function CTA() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="John Smith"
-                    className="w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200"
+                    className={inputClass}
                   />
                 </div>
 
@@ -134,7 +134,7 @@ export default function CTA() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="john@company.com"
-                    className="w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200"
+                    className={inputClass}
                   />
                 </div>
 
@@ -150,7 +150,7 @@ export default function CTA() {
                     value={form.message}
                     onChange={handleChange}
                     placeholder="We need to build a platform that..."
-                    className="w-full px-4 py-3 rounded-xl border border-blue-100 text-blue-900 text-sm placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200 resize-none"
+                    className={`${inputClass} resize-none`}
                   />
                 </div>
 
