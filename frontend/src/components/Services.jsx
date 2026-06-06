@@ -53,8 +53,12 @@ export default function Services() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {services.map(({ Icon, title, description, tags, bg, iconBg, iconColor }, i) => (
+        {/* Bento: the first service is featured (spans 2 cols + 2 rows on lg);
+            the other two stack in the third column. Stacks to one column below lg. */}
+        <div className="grid gap-6 lg:grid-cols-3 lg:grid-rows-2">
+          {services.map(({ Icon, title, description, tags, bg, iconBg, iconColor }, i) => {
+            const featured = i === 0
+            return (
             <motion.a
               key={title}
               href="#contact"
@@ -63,12 +67,14 @@ export default function Services() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
               whileHover={{ y: -6 }}
-              className={`${bg} block rounded-2xl p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+              className={`${bg} flex flex-col rounded-2xl p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                featured ? 'lg:col-span-2 lg:row-span-2 justify-between' : ''
+              }`}
             >
-              <div className={`w-12 h-12 ${iconBg} rounded-xl flex items-center justify-center mb-6`}>
-                <Icon className={`w-6 h-6 ${iconColor}`} />
+              <div className={`${featured ? 'w-14 h-14' : 'w-12 h-12'} ${iconBg} rounded-xl flex items-center justify-center mb-6`}>
+                <Icon className={`${featured ? 'w-7 h-7' : 'w-6 h-6'} ${iconColor}`} />
               </div>
-              <h3 className="font-heading text-xl font-bold text-fg mb-3">{title}</h3>
+              <h3 className={`font-heading font-bold text-fg mb-3 ${featured ? 'text-2xl lg:text-3xl' : 'text-xl'}`}>{title}</h3>
               <p className="text-muted leading-relaxed mb-6 text-sm">{description}</p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {tags.map((tag) => (
@@ -85,7 +91,8 @@ export default function Services() {
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </div>
             </motion.a>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
