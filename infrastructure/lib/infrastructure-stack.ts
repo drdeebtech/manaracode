@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import * as budgets from 'aws-cdk-lib/aws-budgets';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 
@@ -93,6 +94,53 @@ export class ManaracodeStack extends cdk.Stack {
           volumeType: ec2.EbsDeviceVolumeType.GP3,
         }),
       }],
+    });
+
+    // ── Monthly Budget + email alerts ──────────────────────────────────────
+    // Override limit/email via CDK context:
+    //   cdk deploy --context budgetLimitUsd=20 --context budgetAlertEmail=you@example.com
+    const budgetLimitUsd = Number(this.node.tryGetContext('budgetLimitUsd') ?? 15);
+    const budgetAlertEmail: string = this.node.tryGetContext('budgetAlertEmail') ?? 'dreldeeburo@gmail.com';
+
+    const alertSubscribers = (email: string) => [{ subscriptionType: 'EMAIL', address: email }];
+
+    new budgets.CfnBudget(this, 'MonthlyBudget', {
+      budget: {
+        budgetName: 'ManaracodeMonthly',
+        budgetType: 'COST',
+        timeUnit: 'MONTHLY',
+        budgetLimit: { amount: budgetLimitUsd, unit: 'USD' },
+      },
+      notificationsWithSubscribers: [
+        {
+          notification: {
+            notificationType: 'ACTUAL',
+            comparisonOperator: 'GREATER_THAN',
+            threshold: 80,
+            thresholdType: 'PERCENTAGE',
+          },
+          subscribers: alertSubscribers(budgetAlertEmail),
+        },
+        {
+          notification: {
+            notificationType: 'ACTUAL',
+            comparisonOperator: 'GREATER_THAN',
+            threshold: 100,
+            thresholdType: 'PERCENTAGE',
+          },
+          subscribers: alertSubscribers(budgetAlertEmail),
+        },
+        {
+          // Warn early if AWS projects you'll overshoot before month-end
+          notification: {
+            notificationType: 'FORECASTED',
+            comparisonOperator: 'GREATER_THAN',
+            threshold: 100,
+            thresholdType: 'PERCENTAGE',
+          },
+          subscribers: alertSubscribers(budgetAlertEmail),
+        },
+      ],
     });
 
     // ── Outputs ─────────────────────────────────────────────────────────────
