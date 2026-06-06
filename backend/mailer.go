@@ -8,13 +8,13 @@ import (
 
 // Mailer sends email notifications for new contact submissions.
 type Mailer interface {
-	SendContactNotification(name, email, message string) error
+	SendContactNotification(c Contact) error
 }
 
 // noOpMailer is used when SMTP is not configured.
 type noOpMailer struct{}
 
-func (noOpMailer) SendContactNotification(_, _, _ string) error { return nil }
+func (noOpMailer) SendContactNotification(_ Contact) error { return nil }
 
 // smtpMailer sends email via STARTTLS SMTP (port 587).
 type smtpMailer struct {
@@ -38,10 +38,10 @@ func newMailer(host, port, user, pass, from, to string) Mailer {
 	return &smtpMailer{host: host, port: port, user: user, pass: pass, from: from, to: to}
 }
 
-func (m *smtpMailer) SendContactNotification(name, email, message string) error {
+func (m *smtpMailer) SendContactNotification(c Contact) error {
 	// Sanitise header fields — strip newlines to prevent header injection.
-	safeName := strings.NewReplacer("\r", "", "\n", " ").Replace(name)
-	safeEmail := strings.NewReplacer("\r", "", "\n", "").Replace(email)
+	safeName := strings.NewReplacer("\r", "", "\n", " ").Replace(c.Name)
+	safeEmail := strings.NewReplacer("\r", "", "\n", "").Replace(c.Email)
 
 	subject := fmt.Sprintf("New contact from %s", safeName)
 
@@ -55,7 +55,7 @@ func (m *smtpMailer) SendContactNotification(name, email, message string) error 
 	}, "\r\n")
 
 	body := fmt.Sprintf("Name:    %s\r\nEmail:   %s\r\n\r\nMessage:\r\n%s\r\n\r\n---\r\nSent via manaracode.com contact form\r\n",
-		safeName, safeEmail, message)
+		safeName, safeEmail, c.Message)
 
 	msg := []byte(header + "\r\n\r\n" + body)
 

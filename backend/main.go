@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -16,6 +17,43 @@ type server struct {
 	store   *Store
 	limiter *RateLimiter
 	mailer  Mailer
+}
+
+// newServer wires the application dependencies from configuration: it opens
+// the store, builds the mailer (SMTP or no-op), and starts the rate limiter.
+func newServer(cfg Config) (*server, error) {
+	store, err := NewStore(cfg.DBPath)
+	if err != nil {
+		return nil, fmt.Errorf("new store: %w", err)
+	}
+	mailer := newMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom, cfg.NotifyTo)
+	return &server{
+		store:   store,
+		limiter: NewRateLimiter(),
+		mailer:  mailer,
+	}, nil
+}
+
+// routes builds the HTTP handler. Go 1.22+ method-prefixed routing — no
+// third-party router needed.
+func (s *server) routes() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /api/contact", s.handleContact)
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
+	})
+	return mux
+}
+
+// httpServer constructs the HTTP server with its routes and timeouts.
+func (s *server) httpServer() *http.Server {
+	return &http.Server{
+		Addr:         ":8080",
+		Handler:      s.routes(),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
 }
 
 func main() {
@@ -33,50 +71,23 @@ func main() {
 	// Structured JSON logging to stdout — container-friendly.
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
-	dbPath := os.Getenv("DB_PATH")
-	if dbPath == "" {
-		dbPath = "/data/contacts.db"
-	}
-
-	store, err := NewStore(dbPath)
+	srv, err := newServer(loadConfig())
 	if err != nil {
-		slog.Error("init store", "err", err)
+		slog.Error("init server", "err", err)
 		os.Exit(1)
 	}
-	defer store.Close()
+	defer srv.store.Close()
 
-	mailer := newMailer(
-		os.Getenv("SMTP_HOST"),
-		os.Getenv("SMTP_PORT"),
-		os.Getenv("SMTP_USER"),
-		os.Getenv("SMTP_PASS"),
-		os.Getenv("SMTP_FROM"),
-		os.Getenv("NOTIFY_TO"),
-	)
+	// Graceful shutdown on SIGINT / SIGTERM.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	srv := &server{
-		store:   store,
-		limiter: NewRateLimiter(),
-		mailer:  mailer,
-	}
+	serve(srv.httpServer(), quit)
+}
 
-	mux := http.NewServeMux()
-
-	// Go 1.22+ method-prefixed routing — no third-party router needed.
-	mux.HandleFunc("POST /api/contact", srv.handleContact)
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ok"))
-	})
-
-	httpSrv := &http.Server{
-		Addr:         ":8080",
-		Handler:      mux,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-
-	// Start server in background.
+// serve runs httpSrv until a value arrives on quit (or it is closed), then
+// shuts the server down gracefully with a 10-second deadline.
+func serve(httpSrv *http.Server, quit <-chan os.Signal) {
 	go func() {
 		slog.Info("listening", "addr", httpSrv.Addr)
 		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -85,9 +96,6 @@ func main() {
 		}
 	}()
 
-	// Graceful shutdown on SIGINT / SIGTERM.
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
 	slog.Info("shutting down")

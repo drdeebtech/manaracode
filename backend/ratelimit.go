@@ -55,13 +55,18 @@ func (rl *RateLimiter) cleanup() {
 	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
 	for range ticker.C {
-		rl.mu.Lock()
-		for ip, e := range rl.clients {
-			if time.Since(e.lastSeen) > 3*time.Minute {
-				delete(rl.clients, ip)
-			}
+		rl.removeStale(3 * time.Minute)
+	}
+}
+
+// removeStale drops entries not seen within maxAge.
+func (rl *RateLimiter) removeStale(maxAge time.Duration) {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	for ip, e := range rl.clients {
+		if time.Since(e.lastSeen) > maxAge {
+			delete(rl.clients, ip)
 		}
-		rl.mu.Unlock()
 	}
 }
 

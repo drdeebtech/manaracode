@@ -40,12 +40,15 @@ func NewStore(path string) (*Store, error) {
 }
 
 // SaveContact persists a contact form submission.
-func (s *Store) SaveContact(name, email, message, ip string) error {
+func (s *Store) SaveContact(c Contact) error {
 	_, err := s.db.Exec(
 		`INSERT INTO contacts (name, email, message, ip) VALUES (?, ?, ?, ?)`,
-		name, email, message, ip,
+		c.Name, c.Email, c.Message, c.IP,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("insert contact: %w", err)
+	}
+	return nil
 }
 
 // Close releases the database connection.
