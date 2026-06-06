@@ -45,9 +45,6 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
-            What We Do
-          </span>
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Services That Drive Growth
           </h2>
@@ -58,14 +55,15 @@ export default function Services() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {services.map(({ Icon, title, description, tags, bg, iconBg, iconColor }, i) => (
-            <motion.div
+            <motion.a
               key={title}
+              href="#contact"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
               whileHover={{ y: -6 }}
-              className={`${bg} rounded-2xl p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer`}
+              className={`${bg} block rounded-2xl p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
             >
               <div className={`w-12 h-12 ${iconBg} rounded-xl flex items-center justify-center mb-6`}>
                 <Icon className={`w-6 h-6 ${iconColor}`} />
@@ -82,10 +80,11 @@ export default function Services() {
                   </span>
                 ))}
               </div>
-              <div className="flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all duration-200">
-                Learn more <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-1 text-sm font-semibold text-accent">
+                Learn more
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </div>

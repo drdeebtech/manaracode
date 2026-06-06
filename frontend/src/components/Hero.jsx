@@ -48,7 +48,7 @@ export default function Hero() {
               variants={fadeUp(0.1)}
               initial="hidden"
               animate="show"
-              className="font-heading text-5xl lg:text-6xl font-bold text-fg leading-tight mb-6"
+              className="font-heading font-bold text-fg tracking-tight leading-[1.04] text-balance mb-6 text-[clamp(2.75rem,1.2rem+5vw,5rem)]"
             >
               Build Smarter.
               <br />

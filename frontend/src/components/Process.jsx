@@ -39,9 +39,6 @@ export default function Process() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
-            How We Work
-          </span>
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Our Process
           </h2>

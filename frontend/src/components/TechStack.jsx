@@ -53,9 +53,6 @@ export default function TechStack() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
-            Our Stack
-          </span>
           <h2 className="font-heading text-3xl lg:text-4xl font-bold text-fg">
             Technologies We Master
           </h2>
