@@ -17,10 +17,11 @@ export function useFocusTrap(active) {
     const container = ref.current
     const previouslyFocused = document.activeElement
 
-    const focusables = () =>
-      Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
-        (el) => el.offsetParent !== null || el === document.activeElement,
-      )
+    // Exclude explicitly hidden elements. (Avoid offsetParent visibility
+    // checks — they're null in layout-less environments like jsdom and would
+    // drop every candidate.)
+    const isVisible = (el) => !el.hasAttribute('hidden') && !el.closest('[aria-hidden="true"]')
+    const focusables = () => Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(isVisible)
 
     const initial = focusables()[0] || container
     // A bare container isn't focusable without a tabindex; add one so the
