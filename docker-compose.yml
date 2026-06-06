@@ -1,16 +1,18 @@
 services:
   backend:
     build: ./backend
+    image: ghcr.io/drdeebtech/manaracode-backend:latest
     expose:
-      - "8080"          # internal only — not published to the host
+      - "8080"
     volumes:
       - contacts-data:/data
     restart: unless-stopped
 
   frontend:
     build: ./frontend
+    image: ghcr.io/drdeebtech/manaracode-frontend:latest
     ports:
-      - "80:80"
+      - "127.0.0.1:8000:80"
     depends_on:
       - backend
     restart: unless-stopped
