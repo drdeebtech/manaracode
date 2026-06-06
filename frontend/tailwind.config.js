@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"DM Sans"', 'sans-serif'],
+        heading: ['"Bricolage Grotesque"', 'sans-serif'],
+        body: ['"Hanken Grotesk"', 'sans-serif'],
       },
       // Semantic colors backed by CSS-variable design tokens (styles/tokens.css).
       // Components use these (bg-surface, text-fg, border-border, ring-ring,

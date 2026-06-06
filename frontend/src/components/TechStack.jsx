@@ -52,7 +52,6 @@ export default function TechStack() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center"
         >
           <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             Our Stack

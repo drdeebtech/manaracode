@@ -96,7 +96,7 @@ export class Engine {
     const anchor = document.querySelector('[data-three-hero]')
     if (!anchor) return
     const group = new THREE.Group()
-    const geo = new THREE.IcosahedronGeometry(1, 0)
+    const geo = new THREE.IcosahedronGeometry(1, 1)
     const mat = new THREE.MeshStandardMaterial({ color: this.accent, roughness: 0.35, metalness: 0.6, flatShading: true })
     const mesh = new THREE.Mesh(geo, mat)
     group.add(mesh)
@@ -155,13 +155,13 @@ export class Engine {
       mesh.position.set(p.x, p.y, 0)
       mesh.scale.set(p.width * GLOW_PAD, p.height * GLOW_PAD, 1)
       const hovered = entry.el.matches(':hover')
-      const target = hovered ? 0.55 : 0.0
+      const target = hovered ? 0.6 : 0.12 // faint at rest so the glow is a designed presence
       mesh.material.opacity += (target - mesh.material.opacity) * Math.min(dt * 10, 1)
     }
 
     if (this.hero) {
       const p = rectToPlacement(this.hero.userData.anchor.getBoundingClientRect())
-      const r = Math.min(this.hero.userData.anchor.clientWidth, this.hero.userData.anchor.clientHeight) * 0.32
+      const r = Math.min(this.hero.userData.anchor.clientWidth, this.hero.userData.anchor.clientHeight) * 0.42
       this.hero.position.set(p.x, p.y, 1)
       this.hero.userData.mesh.scale.setScalar(r)
       // Subtle pointer parallax (transform-only, cheap).

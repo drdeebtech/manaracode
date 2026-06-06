@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Mail, Clock, Shield } from 'lucide-react'
 import { postContact } from '../lib/api'
 import { Button, Card, Input, Textarea, EmptyState } from '../ui'
+import { EASE } from '../styles/tokens'
 
 const benefits = [
   { Icon: Clock, text: 'Response within 24 hours' },
@@ -52,7 +53,7 @@ export default function CTA() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: EASE.out }}
           >
             <span className="text-sm font-semibold text-accent tracking-widest uppercase mb-4 block">
               Let's Work Together
@@ -89,7 +90,7 @@ export default function CTA() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: EASE.out }}
           >
             <Card variant="elevated" padding="lg">
               {submitted ? (

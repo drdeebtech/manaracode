@@ -37,7 +37,7 @@ export default function Process() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
           <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             How We Work
@@ -45,7 +45,7 @@ export default function Process() {
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Our Process
           </h2>
-          <p className="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted max-w-2xl leading-relaxed">
             A transparent, repeatable framework that consistently delivers exceptional results.
           </p>
         </motion.div>

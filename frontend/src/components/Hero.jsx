@@ -1,13 +1,14 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, Zap } from 'lucide-react'
 import { Button } from '../ui'
+import { EASE } from '../styles/tokens'
 
 const fadeUp = (delay = 0) => ({
   hidden: { opacity: 0, y: 30 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay, ease: 'easeOut' },
+    transition: { duration: 0.6, delay, ease: EASE.out },
   },
 })
 
@@ -51,7 +52,9 @@ export default function Hero() {
             >
               Build Smarter.
               <br />
-              <span className="text-accent">Scale Faster.</span>
+              <span className="bg-gradient-to-r from-accent to-accent-warm bg-clip-text text-transparent">
+                Scale Faster.
+              </span>
               <br />
               Deliver Better.
             </motion.h1>

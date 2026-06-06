@@ -40,7 +40,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
           <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             Social Proof
@@ -48,7 +48,7 @@ export default function Testimonials() {
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             What Our Clients Say
           </h2>
-          <p className="text-lg text-muted max-w-xl mx-auto">
+          <p className="text-lg text-muted max-w-xl">
             We measure success by the impact we create for the businesses we work with.
           </p>
         </motion.div>

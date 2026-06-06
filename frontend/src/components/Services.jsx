@@ -43,7 +43,7 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
           <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             What We Do
@@ -51,7 +51,7 @@ export default function Services() {
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Services That Drive Growth
           </h2>
-          <p className="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted max-w-2xl leading-relaxed">
             From idea to production, we cover every layer of your technology stack with expertise and precision.
           </p>
         </motion.div>
