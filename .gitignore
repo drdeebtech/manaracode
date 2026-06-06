@@ -21,3 +21,12 @@ infrastructure/.claude-flow/
 # Misc
 .DS_Store
 .env
+.gbrain-source
+.gstack/
+
+# Local agent/skill installs (regenerated per machine; gstack submodule is the
+# tracked shared copy, Supabase skills reproduce from skills-lock.json)
+.agents/
+.sources/
+.claude/skills/*
+!.claude/skills/gstack
