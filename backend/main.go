@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -23,7 +24,7 @@ type server struct {
 func newServer(cfg Config) (*server, error) {
 	store, err := NewStore(cfg.DBPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("new store: %w", err)
 	}
 	mailer := newMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom, cfg.NotifyTo)
 	return &server{

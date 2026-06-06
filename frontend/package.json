@@ -1,4 +1,5 @@
 {
+  "name": "manaracode",
   "type": "module",
   "scripts": {
     "dev": "vite",
