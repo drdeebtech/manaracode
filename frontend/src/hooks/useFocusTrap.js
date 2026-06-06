@@ -20,7 +20,7 @@ export function useFocusTrap(active) {
     // Exclude explicitly hidden elements. (Avoid offsetParent visibility
     // checks — they're null in layout-less environments like jsdom and would
     // drop every candidate.)
-    const isVisible = (el) => !el.hasAttribute('hidden') && el.getAttribute('aria-hidden') !== 'true'
+    const isVisible = (el) => !el.hasAttribute('hidden') && !el.closest('[aria-hidden="true"]')
     const focusables = () => Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(isVisible)
 
     const initial = focusables()[0] || container

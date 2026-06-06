@@ -39,6 +39,12 @@ describe('Accordion', () => {
     expect(screen.getByRole('button', { name: /question two/i })).toHaveAttribute('aria-expanded', 'true')
   })
 
+  it('honors defaultOpen', () => {
+    render(<Sample defaultOpen={['two']} />)
+    expect(screen.getByRole('button', { name: /question two/i })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /question one/i })).toHaveAttribute('aria-expanded', 'false')
+  })
+
   it('allowMultiple keeps several open', () => {
     render(<Sample allowMultiple />)
     fireEvent.click(screen.getByRole('button', { name: /question one/i }))

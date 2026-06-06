@@ -75,9 +75,9 @@ Accordion.Item = function AccordionItem({ value, title, children, className }) {
             id={panelId}
             role="region"
             aria-labelledby={headerId}
-            initial={reduced ? false : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={reduced ? {} : { height: 0, opacity: 0 }}
+            initial={reduced ? false : { opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? {} : { opacity: 0, y: -4 }}
             transition={{ duration: DURATION.short, ease: EASE.out }}
             className="overflow-hidden"
           >

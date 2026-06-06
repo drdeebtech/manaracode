@@ -49,7 +49,10 @@ export function Toast({ toast, onDismiss, reduced }) {
         type="button"
         onClick={() => onDismiss(toast.id)}
         aria-label="Dismiss notification"
-        className={cn('-m-1 rounded-md p-1 text-muted hover:text-fg cursor-pointer', FOCUS_RING)}
+        className={cn(
+          '-m-2 inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-md text-muted hover:text-fg cursor-pointer',
+          FOCUS_RING,
+        )}
       >
         <X className="h-4 w-4" aria-hidden="true" />
       </button>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { cloneElement, useState } from 'react'
 import { cn } from '../../lib/cn'
 import { KEYS } from '../../lib/a11y'
 import { useId } from '../../hooks/useId'
@@ -38,15 +38,15 @@ export function Tooltip({ label, side = 'top', children, className }) {
         if (e.key === KEYS.ESCAPE) setOpen(false)
       }}
     >
-      <span aria-describedby={open ? id : undefined} className="inline-flex">
-        {children}
-      </span>
+      {/* Apply aria-describedby to the actual trigger, not the wrapper, so the
+          description reliably reaches the focused element. */}
+      {cloneElement(children, { 'aria-describedby': open ? id : children.props['aria-describedby'] })}
       <span
         role="tooltip"
         id={id}
         className={cn(
           'pointer-events-none absolute z-[60] whitespace-nowrap rounded-md bg-fg px-2 py-1 text-xs text-surface',
-          'transition-opacity duration-150',
+          'transition-opacity duration-150 motion-reduce:transition-none',
           open ? 'opacity-100' : 'opacity-0',
           SIDE[side] || SIDE.top,
           className,

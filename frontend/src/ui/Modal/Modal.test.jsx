@@ -35,4 +35,13 @@ describe('Modal', () => {
     render(<Harness open onClose={() => {}} />)
     expect(screen.getByRole('button', { name: /inside/i })).toHaveFocus()
   })
+
+  it('closes when the overlay is clicked', () => {
+    const onClose = vi.fn()
+    render(<Harness open onClose={onClose} />)
+    // The overlay is the aria-hidden backdrop behind the dialog panel.
+    const overlay = document.querySelector('[aria-hidden="true"]')
+    fireEvent.click(overlay)
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
 })

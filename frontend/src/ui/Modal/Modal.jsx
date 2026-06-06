@@ -34,19 +34,25 @@ export function Modal({ open, onClose, title, description, size = 'md', closeOnO
   const titleId = useId()
   const descId = useId()
 
-  // Close on Escape + lock body scroll while open.
+  // Lock body scroll while open. Keyed only on `open` so an unstable onClose
+  // reference from the parent can't thrash the scroll lock on every render.
   useEffect(() => {
-    if (!open) return
+    if (!open) return undefined
+    const prevOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.documentElement.style.overflow = prevOverflow
+    }
+  }, [open])
+
+  // Close on Escape.
+  useEffect(() => {
+    if (!open) return undefined
     const onKey = (e) => {
       if (e.key === KEYS.ESCAPE) onClose()
     }
     document.addEventListener('keydown', onKey)
-    const prevOverflow = document.documentElement.style.overflow
-    document.documentElement.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.documentElement.style.overflow = prevOverflow
-    }
+    return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
   if (typeof document === 'undefined') return null
@@ -65,7 +71,7 @@ export function Modal({ open, onClose, title, description, size = 'md', closeOnO
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ zIndex: 'var(--z-modal, 60)' }}>
           <motion.div
-            className="absolute inset-0 bg-black/50"
+            className={cn('absolute inset-0 bg-black/50', closeOnOverlay && 'cursor-pointer')}
             onClick={closeOnOverlay ? onClose : undefined}
             aria-hidden="true"
             initial={reduced ? false : { opacity: 0 }}
