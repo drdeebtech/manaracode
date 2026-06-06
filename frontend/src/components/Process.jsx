@@ -47,28 +47,34 @@ export default function Process() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-          <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-border" />
-
-          {steps.map(({ Icon, title, description }, i) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="relative text-center"
-            >
-              <div className="relative inline-flex items-center justify-center w-16 h-16 bg-surface border-2 border-border rounded-2xl mb-6 shadow-sm">
-                <Icon className="w-7 h-7 text-accent" />
-                <span className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center font-heading">
-                  {i + 1}
-                </span>
-              </div>
-              <h3 className="font-heading text-lg font-bold text-fg mb-3">{title}</h3>
-              <p className="text-muted text-sm leading-relaxed">{description}</p>
-            </motion.div>
-          ))}
+        {/* Vertical timeline: a real ordered sequence (so the numbers earn their
+            place). A rail runs through the node centers; steps stack naturally on
+            every breakpoint. */}
+        <div className="relative max-w-3xl">
+          <div className="absolute left-8 top-8 bottom-8 w-px bg-border" aria-hidden="true" />
+          <ol className="space-y-10">
+            {steps.map(({ Icon, title, description }, i) => (
+              <motion.li
+                key={title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                className="relative flex items-start gap-6"
+              >
+                <div className="relative z-10 inline-flex shrink-0 items-center justify-center w-16 h-16 bg-surface border-2 border-border rounded-2xl shadow-sm">
+                  <Icon className="w-7 h-7 text-accent" />
+                  <span className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center font-heading">
+                    {i + 1}
+                  </span>
+                </div>
+                <div className="pt-2">
+                  <h3 className="font-heading text-lg font-bold text-fg mb-2">{title}</h3>
+                  <p className="text-muted text-sm leading-relaxed max-w-prose">{description}</p>
+                </div>
+              </motion.li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

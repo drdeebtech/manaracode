@@ -50,15 +50,22 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map(({ quote, name, role, company, initials, color }, i) => (
+        {/* Bento: the first testimonial is a featured pull-quote (spans 2 cols +
+            2 rows on lg); the other two stack in the third column. Stacks to one
+            column below lg. */}
+        <div className="grid gap-6 lg:grid-cols-3 lg:grid-rows-2">
+          {testimonials.map(({ quote, name, role, company, initials, color }, i) => {
+            const featured = i === 0
+            return (
             <motion.div
               key={name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col"
+              className={`bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col ${
+                featured ? 'lg:col-span-2 lg:row-span-2 justify-between' : ''
+              }`}
             >
               {/* Stars */}
               <div className="flex gap-1 mb-5">
@@ -68,13 +75,17 @@ export default function Testimonials() {
               </div>
 
               {/* Quote */}
-              <p className="text-muted leading-relaxed text-sm flex-1 mb-6">
+              <p
+                className={`leading-relaxed flex-1 mb-6 ${
+                  featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance' : 'text-muted text-sm'
+                }`}
+              >
                 "{quote}"
               </p>
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+                <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
                   {initials}
                 </div>
                 <div>
@@ -83,7 +94,8 @@ export default function Testimonials() {
                 </div>
               </div>
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
