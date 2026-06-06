@@ -39,8 +39,13 @@ export function Tooltip({ label, side = 'top', children, className }) {
       }}
     >
       {/* Apply aria-describedby to the actual trigger, not the wrapper, so the
-          description reliably reaches the focused element. */}
-      {cloneElement(children, { 'aria-describedby': open ? id : children.props['aria-describedby'] })}
+          description reliably reaches the focused element. Merge with any
+          existing value (space-separated per ARIA) rather than replacing it. */}
+      {cloneElement(children, {
+        'aria-describedby': open
+          ? [children.props['aria-describedby'], id].filter(Boolean).join(' ')
+          : children.props['aria-describedby'],
+      })}
       <span
         role="tooltip"
         id={id}
