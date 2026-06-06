@@ -6,6 +6,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Token-driven backdrop. The fixed WebGL canvas (z: var(--z-canvas)) sits
+     above this and behind content, so transparent sections reveal the 3D. */
+  background-color: var(--color-bg);
 }
 
 @keyframes marquee-left {
@@ -21,6 +24,6 @@ html {
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background-color: #eff6ff;
-  color: #1e3a8a;
+  background-color: transparent; /* let the html backdrop + WebGL canvas show */
+  color: var(--color-text);
 }

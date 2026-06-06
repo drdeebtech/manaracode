@@ -9,7 +9,7 @@ const testimonials = [
     role: 'CTO',
     company: 'FinanceFlow',
     initials: 'AA',
-    color: 'bg-blue-600',
+    color: 'bg-accent',
   },
   {
     quote:
@@ -18,7 +18,7 @@ const testimonials = [
     role: 'Founder',
     company: 'ShopLux',
     initials: 'SK',
-    color: 'bg-indigo-500',
+    color: 'bg-accent',
   },
   {
     quote:
@@ -27,13 +27,13 @@ const testimonials = [
     role: 'VP Engineering',
     company: 'CloudOps',
     initials: 'MJ',
-    color: 'bg-green-600',
+    color: 'bg-accent-warm',
   },
 ]
 
 export default function Testimonials() {
   return (
-    <section className="py-24 px-4 sm:px-6 bg-blue-50">
+    <section className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -42,13 +42,13 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-sm font-semibold text-blue-500 tracking-widest uppercase mb-3 block">
+          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
             Social Proof
           </span>
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-blue-900 mb-5">
+          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             What Our Clients Say
           </h2>
-          <p className="text-lg text-blue-700/70 max-w-xl mx-auto">
+          <p className="text-lg text-muted max-w-xl mx-auto">
             We measure success by the impact we create for the businesses we work with.
           </p>
         </motion.div>
@@ -61,7 +61,7 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="bg-white rounded-2xl p-8 shadow-sm border border-blue-100 flex flex-col"
+              className="bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col"
             >
               {/* Stars */}
               <div className="flex gap-1 mb-5">
@@ -71,7 +71,7 @@ export default function Testimonials() {
               </div>
 
               {/* Quote */}
-              <p className="text-blue-800/80 leading-relaxed text-sm flex-1 mb-6">
+              <p className="text-muted leading-relaxed text-sm flex-1 mb-6">
                 "{quote}"
               </p>
 
@@ -81,8 +81,8 @@ export default function Testimonials() {
                   {initials}
                 </div>
                 <div>
-                  <p className="font-semibold text-blue-900 text-sm">{name}</p>
-                  <p className="text-blue-500 text-xs">{role}, {company}</p>
+                  <p className="font-semibold text-fg text-sm">{name}</p>
+                  <p className="text-muted text-xs">{role}, {company}</p>
                 </div>
               </div>
             </motion.div>
