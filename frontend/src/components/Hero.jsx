@@ -52,9 +52,7 @@ export default function Hero() {
             >
               Build Smarter.
               <br />
-              <span className="bg-gradient-to-r from-accent to-accent-warm bg-clip-text text-transparent">
-                Scale Faster.
-              </span>
+              <span className="text-accent">Scale Faster.</span>
               <br />
               Deliver Better.
             </motion.h1>
