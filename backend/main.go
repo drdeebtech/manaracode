@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"log/slog"
 	"net/http"
 	"os"
@@ -18,6 +19,17 @@ type server struct {
 }
 
 func main() {
+	healthcheck := flag.Bool("healthcheck", false, "probe /healthz and exit 0/1")
+	flag.Parse()
+
+	if *healthcheck {
+		resp, err := http.Get("http://localhost:8080/healthz")
+		if err != nil || resp.StatusCode != http.StatusOK {
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
 	// Structured JSON logging to stdout — container-friendly.
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
