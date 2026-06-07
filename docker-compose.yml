@@ -1,7 +1,9 @@
 services:
   backend:
     build: ./backend
-    image: ghcr.io/drdeebtech/manaracode-backend:latest
+    # IMAGE_TAG is set per-deploy (commit SHA) in /opt/manaracode/.env so a deploy
+    # pins an exact, revertable image; falls back to :latest for local/manual use.
+    image: ghcr.io/drdeebtech/manaracode-backend:${IMAGE_TAG:-latest}
     expose:
       - "8080"
     volumes:
@@ -23,7 +25,7 @@ services:
 
   frontend:
     build: ./frontend
-    image: ghcr.io/drdeebtech/manaracode-frontend:latest
+    image: ghcr.io/drdeebtech/manaracode-frontend:${IMAGE_TAG:-latest}
     ports:
       - "127.0.0.1:8000:80"
     depends_on:

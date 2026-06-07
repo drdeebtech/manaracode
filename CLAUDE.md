@@ -38,6 +38,18 @@ The CLI is installed at `~/.local/bin/coderabbit` (authenticated as `github/drde
 
 GitHub Actions are pinned to commit SHAs (supply-chain safety) and kept current — the Node-based actions on Node-24 releases (so they don't hit the Node-20 runner deprecation), and the container-based ones (`appleboy/*`, which run in Docker and are Node-agnostic) on their current releases. When bumping an action, resolve the new SHA with `gh api repos/<owner>/<action>/commits/<tag> --jq .sha` and keep the `# vX.Y.Z` comment.
 
+## Deploy & rollback
+
+Push to `main` → the Deploy workflow builds images tagged with both the commit SHA and `:latest`, then deploys the **SHA** (written to `/opt/manaracode/.env` as `IMAGE_TAG`, which `docker-compose.yml` reads). A post-deploy health gate fails the run if the site isn't serving.
+
+**Rollback:** re-run the Deploy workflow via `workflow_dispatch` with `image_tag` set to a previous commit SHA — it skips the build and redeploys that existing image:
+
+```bash
+gh workflow run deploy.yml -f image_tag=<previous-commit-sha>
+```
+
+Find a known-good SHA from merged PRs / `git log` on `main`. Images live at `ghcr.io/drdeebtech/manaracode-{frontend,backend}:<sha>`.
+
 ## Dependencies
 
 - `framer-motion` — animation library (already installed via `npm install`)
