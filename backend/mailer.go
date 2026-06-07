@@ -87,7 +87,7 @@ func (m *smtpMailer) SendContactNotification(c Contact) error {
 	// in-process test server does not, in which case PlainAuth still permits
 	// auth over a loopback connection).
 	if ok, _ := client.Extension("STARTTLS"); ok {
-		if err := client.StartTLS(&tls.Config{ServerName: m.host}); err != nil {
+		if err := client.StartTLS(&tls.Config{ServerName: m.host, MinVersion: tls.VersionTLS12}); err != nil {
 			return fmt.Errorf("smtp starttls: %w", err)
 		}
 	}
