@@ -65,7 +65,9 @@ export class ManaracodeStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       lifecycleRules: [
         {
-          expiration: cdk.Duration.days(30),
+          // 90-day recovery window for lead data (tiny SQLite dumps — cost is
+          // negligible); old non-current versions expire after 30 days.
+          expiration: cdk.Duration.days(90),
           noncurrentVersionExpiration: cdk.Duration.days(30),
         },
       ],
@@ -126,6 +128,8 @@ TS=$(date +%F-%H%M%S)
 TMP=$(mktemp)
 docker run --rm -v "$VOLUME":/data alpine:3 sh -c \\
   'apk add --no-cache sqlite >/dev/null 2>&1 && sqlite3 /data/contacts.db ".backup /data/.bak.db" && cat /data/.bak.db && rm -f /data/.bak.db' > "$TMP"
+# Never upload an empty/partial file (a failed .backup yields no stdout).
+[ -s "$TMP" ] || { echo "backup produced no data; aborting"; rm -f "$TMP"; exit 1; }
 aws s3 cp "$TMP" "s3://${backupBucket.bucketName}/contacts-$TS.db.sqlite"
 rm -f "$TMP"
 SCRIPT`,

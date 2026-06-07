@@ -36,8 +36,24 @@ lives in a Docker volume on the instance's root EBS, so apply in this order:
    ```
    `cdk deploy` will replace the instance → **its public IP changes**; update the
    `REMOTE_HOST` GitHub secret and Cloudflare DNS to the new IP afterward.
-4. **Restore data onto the new instance** (the first deploy `docker compose up`
-   recreates the empty volume; load the dump from step 2), then verify the site.
+4. **Restore data onto the new instance.** The first deploy `docker compose up`
+   recreates an empty volume; load the dump from step 2 (or the latest nightly S3
+   backup), then verify the site:
+   ```bash
+   # Option A — from the local dump made in step 2:
+   gunzip -c contacts-backup-YYYY-MM-DD.sql.gz | \
+     ssh ubuntu@<new-host> \
+       'docker run --rm -i -v manaracode_contacts-data:/data alpine:3 \
+          sh -c "apk add -q sqlite && sqlite3 /data/contacts.db"'
+
+   # Option B — from the latest nightly S3 backup (a .backup snapshot):
+   ssh ubuntu@<new-host> '
+     aws s3 cp "$(aws s3 ls s3://<bucket>/ | sort | tail -1 | awk "{print \$4}" | sed "s#^#s3://<bucket>/#")" /tmp/restore.db &&
+     docker run --rm -v manaracode_contacts-data:/data -v /tmp:/in alpine:3 \
+       cp /in/restore.db /data/contacts.db'
+
+   docker compose -f /opt/manaracode/docker-compose.yml restart backend
+   ```
 
 What each change does once deployed:
 - **#4** — SSH ingress CIDR is `--context sshCidr=...` (default `0.0.0.0/0`). The
