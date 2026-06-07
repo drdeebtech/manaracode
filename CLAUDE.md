@@ -36,7 +36,7 @@ The CLI is installed at `~/.local/bin/coderabbit` (authenticated as `github/drde
 7. **After merge, verify it landed:** `git checkout main && git pull`, confirm the squash commit is on `main`, and that the **Deploy** workflow (push to `main`) ran green. A merge that doesn't show on `main` + a Deploy run means something went wrong.
 8. **Never `git push origin --delete` a branch manually** (blocked by the safety classifier); `--delete-branch` on merge handles it.
 
-GitHub Actions are pinned to commit SHAs (supply-chain safety) and kept on current, Node-24-compatible versions. When bumping an action, resolve the new SHA with `gh api repos/<owner>/<action>/commits/<tag> --jq .sha` and keep the `# vX.Y.Z` comment.
+GitHub Actions are pinned to commit SHAs (supply-chain safety) and kept current — the Node-based actions on Node-24 releases (so they don't hit the Node-20 runner deprecation), and the container-based ones (`appleboy/*`, which run in Docker and are Node-agnostic) on their current releases. When bumping an action, resolve the new SHA with `gh api repos/<owner>/<action>/commits/<tag> --jq .sha` and keep the `# vX.Y.Z` comment.
 
 ## Dependencies
 
