@@ -45,7 +45,7 @@ function MarqueeRow({ items, direction = 'left' }) {
 
 export default function TechStack() {
   return (
-    <section className="py-20 bg-surface overflow-hidden">
+    <section className="py-16 bg-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

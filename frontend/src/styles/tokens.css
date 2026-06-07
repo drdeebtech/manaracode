@@ -21,6 +21,7 @@
   /* Accents */
   --color-accent: #2563eb;
   --color-accent-warm: #22c55e; /* primary CTA fill */
+  --color-accent-2: #7c3aed; /* secondary hue — atmosphere + 3D only, not UI controls */
   --color-on-accent: #0b1220; /* readable text on accent-warm fills (light/medium in both themes) */
 
   /* Semantic (foreground/icon strength) */
@@ -63,6 +64,7 @@
 
   /* Layering */
   --z-canvas: -1;
+  --z-raised: 10; /* in-flow decorative lift (e.g. hero floating cards over the terminal) */
   --z-overlay: 50;
   --z-modal: 60;
   --z-toast: 70;
@@ -79,6 +81,7 @@
 
   --color-accent: oklch(64% 0.19 255);
   --color-accent-warm: oklch(82% 0.17 95);
+  --color-accent-2: oklch(62% 0.22 300); /* electric violet — secondary atmosphere/3D hue */
 
   --color-success: oklch(72% 0.17 150);
   --color-warning: oklch(80% 0.15 80);

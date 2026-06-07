@@ -1,4 +1,5 @@
 import { MotionConfig } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Stats from './components/Stats'
@@ -39,6 +40,15 @@ export default function App() {
           <CTA />
         </main>
         <Footer />
+        {/* Thumb-zone primary CTA, mobile only. On md+ the navbar + hero CTAs are
+            already reachable; here the hero CTA scrolls off, so keep one fixed. */}
+        <a
+          href="#contact"
+          className="md:hidden fixed bottom-4 left-4 right-4 z-[var(--z-overlay)] inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-accent-warm text-on-accent font-semibold shadow-lg shadow-black/30 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+        >
+          Start Your Project
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+        </a>
       </div>
     </MotionConfig>
   )

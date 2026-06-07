@@ -64,8 +64,8 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className={`bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col ${
-                featured ? 'lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : ''
+              className={`bg-surface p-8 shadow-sm border border-border flex flex-col ${
+                featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
               }`}
             >
               <div className={featured ? 'lg:flex-1' : ''}>
@@ -79,7 +79,7 @@ export default function Testimonials() {
                 {/* Quote */}
                 <p
                   className={`leading-relaxed flex-1 ${
-                    featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance mb-0' : 'text-muted text-sm mb-6'
+                    featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance mb-0' : 'text-muted text-base mb-6'
                   }`}
                 >
                   "{quote}"

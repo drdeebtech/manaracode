@@ -70,8 +70,8 @@ export default function Services() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 whileHover={{ y: -6 }}
-                className={`${bg} flex flex-col rounded-2xl p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  featured ? 'lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : ''
+                className={`${bg} flex flex-col p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
                 }`}
               >
                 <div className={featured ? 'lg:w-2/5 lg:shrink-0' : ''}>
@@ -83,7 +83,7 @@ export default function Services() {
                   </h3>
                 </div>
                 <div className={featured ? 'lg:flex-1' : ''}>
-                  <p className="text-muted leading-relaxed mb-6 text-sm">{description}</p>
+                  <p className="text-muted leading-relaxed mb-6 text-base">{description}</p>
                   <div className="flex flex-wrap gap-2 mb-6">
                     {tags.map((tag) => (
                       <span
