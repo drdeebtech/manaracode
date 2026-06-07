@@ -69,10 +69,9 @@ export default function Footer() {
 
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted">© 2025 Manaracode. All rights reserved.</p>
-          <div className="flex gap-6 text-sm text-muted">
-            <a href="#" className="hover:text-fg transition-opacity cursor-pointer">Privacy Policy</a>
-            <a href="#" className="hover:text-fg transition-opacity cursor-pointer">Terms of Service</a>
-          </div>
+          {/* Privacy/Terms links removed until the real pages exist — linking to
+              non-existent routes is worse than omitting them. Add back with real
+              hrefs when the legal pages are written. */}
         </div>
       </div>
     </footer>

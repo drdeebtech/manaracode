@@ -76,6 +76,9 @@ Tabs.List = function TabsList({ className, children, label }) {
   }
 
   return (
+    // ARIA APG roving-tabindex pattern: focus lives on the tabs (Tabs.Trigger),
+    // not the tablist; this container only delegates arrow/Home/End keys.
+    // eslint-disable-next-line jsx-a11y/interactive-supports-focus
     <div
       ref={ref}
       role="tablist"
