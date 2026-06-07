@@ -6,21 +6,33 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 )
 
 // fakeMailer records the last contact it was asked to send and can be
-// configured to return an error.
+// configured to return an error. It is concurrency-safe because emails are now
+// dispatched from background goroutines.
 type fakeMailer struct {
+	mu     sync.Mutex
 	called bool
 	last   Contact
 	err    error
 }
 
 func (f *fakeMailer) SendContactNotification(c Contact) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	f.called = true
 	f.last = c
 	return f.err
+}
+
+// snapshot returns the recorded state under lock (call after inflight.Wait()).
+func (f *fakeMailer) snapshot() (bool, Contact) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return f.called, f.last
 }
 
 func newTestServer(t *testing.T) (*server, *fakeMailer) {
@@ -31,14 +43,21 @@ func newTestServer(t *testing.T) (*server, *fakeMailer) {
 		limiter: NewRateLimiter(),
 		mailer:  fm,
 	}
+	t.Cleanup(srv.limiter.Stop) // end the cleanup goroutine so it doesn't leak per test
+	// Drain any in-flight async email sends before the store (registered earlier by
+	// newTestStore) is closed — cleanups run LIFO, so this fires first.
+	t.Cleanup(srv.inflight.Wait)
 	return srv, fm
 }
 
 // post issues a POST /api/contact with a unique source IP so the per-IP rate
-// limiter does not interfere across independent test cases.
+// limiter does not interfere across independent test cases. RemoteAddr is set to
+// a loopback (trusted proxy) so clientIP honors the forwarded X-Real-IP, exactly
+// as it does behind nginx on the private network in production.
 func post(t *testing.T, srv *server, body string, ip string) *httptest.ResponseRecorder {
 	t.Helper()
 	r := httptest.NewRequest("POST", "/api/contact", strings.NewReader(body))
+	r.RemoteAddr = "127.0.0.1:12345"
 	r.Header.Set("X-Real-IP", ip)
 	w := httptest.NewRecorder()
 	srv.handleContact(w, r)
@@ -61,8 +80,9 @@ func TestHandleContactSuccess(t *testing.T) {
 	if resp["status"] != "ok" {
 		t.Fatalf("expected status ok, got %v", resp)
 	}
-	if !fm.called || fm.last.Email != "jane@example.com" {
-		t.Fatalf("mailer not invoked with the submission: %+v", fm)
+	srv.inflight.Wait() // email is dispatched asynchronously; await it before asserting
+	if called, last := fm.snapshot(); !called || last.Email != "jane@example.com" {
+		t.Fatalf("mailer not invoked with the submission: called=%v last=%+v", called, last)
 	}
 }
 
@@ -147,6 +167,7 @@ func TestHandleContactEmailFailureIsNonFatal(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200 (email failure must not surface)", w.Code)
 	}
+	srv.inflight.Wait() // let the async send (which fails) complete before teardown
 	var count int
 	if err := srv.store.db.QueryRow(`SELECT COUNT(*) FROM contacts`).Scan(&count); err != nil {
 		t.Fatalf("count: %v", err)

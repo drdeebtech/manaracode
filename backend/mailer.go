@@ -1,10 +1,17 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net"
 	"net/smtp"
 	"strings"
+	"time"
 )
+
+// smtpTimeout bounds the whole SMTP exchange (dial + dialogue) so a slow or
+// unresponsive relay can never block indefinitely.
+const smtpTimeout = 15 * time.Second
 
 // Mailer sends email notifications for new contact submissions.
 type Mailer interface {
@@ -59,6 +66,52 @@ func (m *smtpMailer) SendContactNotification(c Contact) error {
 
 	msg := []byte(header + "\r\n\r\n" + body)
 
-	auth := smtp.PlainAuth("", m.user, m.pass, m.host)
-	return smtp.SendMail(m.host+":"+m.port, auth, m.from, []string{m.to}, msg)
+	addr := net.JoinHostPort(m.host, m.port)
+	conn, err := net.DialTimeout("tcp", addr, smtpTimeout)
+	if err != nil {
+		return fmt.Errorf("smtp dial: %w", err)
+	}
+	defer conn.Close()
+	// One deadline covers the entire dialogue (handshake, auth, DATA).
+	if err := conn.SetDeadline(time.Now().Add(smtpTimeout)); err != nil {
+		return fmt.Errorf("smtp deadline: %w", err)
+	}
+
+	client, err := smtp.NewClient(conn, m.host)
+	if err != nil {
+		return fmt.Errorf("smtp client: %w", err)
+	}
+	defer client.Close()
+
+	// Upgrade to TLS when the server advertises STARTTLS (real relays do; the
+	// in-process test server does not, in which case PlainAuth still permits
+	// auth over a loopback connection).
+	if ok, _ := client.Extension("STARTTLS"); ok {
+		if err := client.StartTLS(&tls.Config{ServerName: m.host}); err != nil {
+			return fmt.Errorf("smtp starttls: %w", err)
+		}
+	}
+	if ok, _ := client.Extension("AUTH"); ok {
+		if err := client.Auth(smtp.PlainAuth("", m.user, m.pass, m.host)); err != nil {
+			return fmt.Errorf("smtp auth: %w", err)
+		}
+	}
+
+	if err := client.Mail(m.from); err != nil {
+		return fmt.Errorf("smtp mail from: %w", err)
+	}
+	if err := client.Rcpt(m.to); err != nil {
+		return fmt.Errorf("smtp rcpt to: %w", err)
+	}
+	wc, err := client.Data()
+	if err != nil {
+		return fmt.Errorf("smtp data: %w", err)
+	}
+	if _, err := wc.Write(msg); err != nil {
+		return fmt.Errorf("smtp write: %w", err)
+	}
+	if err := wc.Close(); err != nil {
+		return fmt.Errorf("smtp close: %w", err)
+	}
+	return client.Quit()
 }

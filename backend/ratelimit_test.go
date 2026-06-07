@@ -8,6 +8,7 @@ import (
 
 func TestRateLimiterAllowsBurstThenDenies(t *testing.T) {
 	rl := NewRateLimiter()
+	defer rl.Stop()
 
 	const ip = "198.51.100.4"
 	// Burst is 3: the first three calls are allowed, the fourth is denied.
@@ -23,6 +24,7 @@ func TestRateLimiterAllowsBurstThenDenies(t *testing.T) {
 
 func TestRateLimiterIsolatesByIP(t *testing.T) {
 	rl := NewRateLimiter()
+	defer rl.Stop()
 
 	// Exhaust one IP's burst.
 	for i := 0; i < 3; i++ {
@@ -40,6 +42,7 @@ func TestRateLimiterIsolatesByIP(t *testing.T) {
 
 func TestRateLimiterRemoveStale(t *testing.T) {
 	rl := NewRateLimiter()
+	defer rl.Stop()
 
 	rl.Allow("10.0.0.1") // creates an entry with lastSeen = now
 	// Force the entry to look old.
@@ -75,6 +78,10 @@ func TestClientIP(t *testing.T) {
 		{name: "X-Forwarded-For list takes first", xForwarded: "192.0.2.30, 70.1.2.3", remoteAddr: "10.0.0.1:5000", want: "192.0.2.30"},
 		{name: "RemoteAddr fallback strips port", remoteAddr: "192.0.2.40:9999", want: "192.0.2.40"},
 		{name: "RemoteAddr without port returned as-is", remoteAddr: "192.0.2.50", want: "192.0.2.50"},
+		{name: "loopback peer is trusted", xRealIP: "192.0.2.77", remoteAddr: "127.0.0.1:5000", want: "192.0.2.77"},
+		// Security boundary: a public (untrusted) peer cannot spoof its IP via headers.
+		{name: "untrusted peer ignores X-Real-IP", xRealIP: "192.0.2.99", remoteAddr: "203.0.113.7:5000", want: "203.0.113.7"},
+		{name: "untrusted peer ignores X-Forwarded-For", xForwarded: "192.0.2.99", remoteAddr: "8.8.8.8:5000", want: "8.8.8.8"},
 	}
 
 	for _, tc := range tests {
