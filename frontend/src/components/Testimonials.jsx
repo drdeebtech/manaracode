@@ -50,10 +50,11 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        {/* Bento: the first testimonial is a featured pull-quote (spans 2 cols +
-            2 rows on lg); the other two stack in the third column. Stacks to one
-            column below lg. */}
-        <div className="grid gap-6 lg:grid-cols-3 lg:grid-rows-2">
+        {/* Bento: the first testimonial is a full-width featured pull-quote with
+            a horizontal interior (quote beside the author block, so it fills the
+            width with no empty void); the other two sit below in two columns.
+            Stacks to one column below lg. */}
+        <div className="grid gap-6 lg:grid-cols-2">
           {testimonials.map(({ quote, name, role, company, initials, color }, i) => {
             const featured = i === 0
             return (
@@ -64,27 +65,29 @@ export default function Testimonials() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
               className={`bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col ${
-                featured ? 'lg:col-span-2 lg:row-span-2 justify-between' : ''
+                featured ? 'lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : ''
               }`}
             >
-              {/* Stars */}
-              <div className="flex gap-1 mb-5">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
+              <div className={featured ? 'lg:flex-1' : ''}>
+                {/* Stars */}
+                <div className="flex gap-1 mb-5">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p
+                  className={`leading-relaxed flex-1 ${
+                    featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance mb-0' : 'text-muted text-sm mb-6'
+                  }`}
+                >
+                  "{quote}"
+                </p>
               </div>
 
-              {/* Quote */}
-              <p
-                className={`leading-relaxed flex-1 mb-6 ${
-                  featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance' : 'text-muted text-sm'
-                }`}
-              >
-                "{quote}"
-              </p>
-
               {/* Author */}
-              <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-3 ${featured ? 'lg:w-1/4 lg:shrink-0 mt-6 lg:mt-0' : ''}`}>
                 <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
                   {initials}
                 </div>
