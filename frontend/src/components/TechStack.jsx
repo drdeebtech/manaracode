@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { reveal } from '../styles/tokens'
 
 const row1 = [
   { name: 'React',      color: '#61DAFB', bg: '#E8F9FD' },
@@ -47,12 +48,7 @@ export default function TechStack() {
   return (
     <section className="py-16 bg-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <motion.div {...reveal}>
           <h2 className="font-heading text-3xl lg:text-4xl font-bold text-fg">
             Technologies We Master
           </h2>

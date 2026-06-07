@@ -30,6 +30,12 @@
   --color-error: #ef4444;
   --color-info: #2563eb;
 
+  /* Terminal motif — an editor surface that is always dark in both themes (a
+     code terminal is conventionally dark), brand-tinted so it stays on-system
+     instead of raw neutral gray. ANSI line colors live in the component. */
+  --color-terminal-bg: oklch(12% 0.03 265);
+  --color-terminal-bar: oklch(17% 0.03 265);
+
   /* Soft tints — chip backgrounds, icon halos, skeleton */
   --color-neutral-soft: #dbeafe;
   --color-accent-soft: #dbeafe;

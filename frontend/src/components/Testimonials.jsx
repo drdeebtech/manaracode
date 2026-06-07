@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
+import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
 const testimonials = [
   {
@@ -35,13 +36,7 @@ export default function Testimonials() {
   return (
     <section className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
+        <motion.div {...reveal} className="mb-16">
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             What Our Clients Say
           </h2>
@@ -54,16 +49,19 @@ export default function Testimonials() {
             a horizontal interior (quote beside the author block, so it fills the
             width with no empty void); the other two sit below in two columns.
             Stacks to one column below lg. */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <motion.div
+          variants={revealStagger()}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid gap-6 lg:grid-cols-2"
+        >
           {testimonials.map(({ quote, name, role, company, initials, color }, i) => {
             const featured = i === 0
             return (
             <motion.div
               key={name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
+              variants={revealItem}
               className={`bg-surface p-8 shadow-sm border border-border flex flex-col ${
                 featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
               }`}
@@ -99,7 +97,7 @@ export default function Testimonials() {
             </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

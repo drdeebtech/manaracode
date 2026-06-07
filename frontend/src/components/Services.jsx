@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Lightbulb, Code2, Settings, ArrowRight } from 'lucide-react'
+import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
 const services = [
   {
@@ -38,13 +39,7 @@ export default function Services() {
   return (
     <section id="services" className="py-24 px-4 sm:px-6 bg-surface">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
+        <motion.div {...reveal} className="mb-16">
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Services That Drive Growth
           </h2>
@@ -58,17 +53,20 @@ export default function Services() {
         {/* Bento: first service is a full-width featured card with a horizontal
             interior (so it fills the width, no empty void); the other two sit
             below in two columns. Stacks to one column below lg. */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <motion.div
+          variants={revealStagger()}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid gap-6 lg:grid-cols-2"
+        >
           {services.map(({ Icon, title, description, tags, bg, iconBg, iconColor }, i) => {
             const featured = i === 0
             return (
               <motion.a
                 key={title}
                 href="#contact"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
+                variants={revealItem}
                 whileHover={{ y: -6 }}
                 className={`${bg} flex flex-col p-8 group border border-transparent hover:border-border hover:shadow-lg hover:shadow-black/20 transition-opacity duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
@@ -102,7 +100,7 @@ export default function Services() {
               </motion.a>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Search, Map, Hammer, Rocket } from 'lucide-react'
+import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
 const steps = [
   {
@@ -32,13 +33,7 @@ export default function Process() {
   return (
     <section id="process" className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
+        <motion.div {...reveal} className="mb-16">
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Our Process
           </h2>
@@ -52,14 +47,17 @@ export default function Process() {
             every breakpoint. */}
         <div className="relative max-w-3xl">
           <div className="absolute left-8 top-8 bottom-8 w-px bg-border" aria-hidden="true" />
-          <ol className="space-y-10">
+          <motion.ol
+            variants={revealStagger()}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="space-y-10"
+          >
             {steps.map(({ Icon, title, description }, i) => (
               <motion.li
                 key={title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
+                variants={revealItem}
                 className="relative flex items-start gap-6"
               >
                 <div className="relative z-10 inline-flex shrink-0 items-center justify-center w-16 h-16 bg-surface border-2 border-border rounded-2xl shadow-sm">
@@ -74,7 +72,7 @@ export default function Process() {
                 </div>
               </motion.li>
             ))}
-          </ol>
+          </motion.ol>
         </div>
       </div>
     </section>

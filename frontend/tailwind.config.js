@@ -37,6 +37,10 @@ export default {
         },
         info: 'var(--color-info)',
         'neutral-soft': 'var(--color-neutral-soft)',
+        terminal: {
+          bg: 'var(--color-terminal-bg)',
+          bar: 'var(--color-terminal-bar)',
+        },
       },
     },
   },

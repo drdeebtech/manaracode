@@ -37,9 +37,12 @@ const VARIANTS = {
   ghost: 'text-accent bg-transparent hover:bg-accent-soft',
 }
 
+// Every size meets the 44px touch target (WCAG 2.5.5). Sizes differ in text
+// and horizontal padding, not hit area, so a compact button is never an
+// inaccessible one.
 const SIZES = {
-  sm: 'text-sm px-3.5 py-2 min-h-[36px]',
-  md: 'text-sm px-5 py-3 min-h-[44px]', // >= 44px touch target
+  sm: 'text-sm px-4 py-2 min-h-[44px]',
+  md: 'text-sm px-5 py-3 min-h-[44px]',
   lg: 'text-base px-7 py-3.5 min-h-[52px]',
 }
 

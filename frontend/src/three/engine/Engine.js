@@ -12,18 +12,27 @@ import { getGsap } from './gsapHooks'
 
 const GLOW_PAD = 1.6 // glow extends beyond the button
 
-// Resolve a CSS custom property (e.g. an oklch token) to a parseable rgb()
-// string by letting the browser compute it — so the 3D layer matches the
-// active theme accent instead of a hardcoded color.
+// Resolve a CSS custom property (e.g. an oklch token) to an rgb/hex string the
+// renderer understands — so the 3D layer matches the active theme accent.
+// getComputedStyle returns the color in its authored model, and modern browsers
+// keep oklch() as oklch(); three.js can't parse that, so we round-trip through a
+// canvas 2D context, whose fillStyle getter always serializes to #rrggbb/rgba().
 function cssVarColor(varName, fallback) {
   try {
     const probe = document.createElement('span')
     probe.style.color = `var(${varName}, ${fallback})`
     probe.style.display = 'none'
     document.body.appendChild(probe)
-    const rgb = getComputedStyle(probe).color
+    const computed = getComputedStyle(probe).color
     document.body.removeChild(probe)
-    return rgb || fallback
+    // Rasterize one pixel and read its sRGB bytes back: getImageData always
+    // returns 0-255 rgb regardless of the input model (oklch, color(), etc.),
+    // so three.js gets a model it can parse.
+    const ctx = document.createElement('canvas').getContext('2d')
+    ctx.fillStyle = computed || fallback
+    ctx.fillRect(0, 0, 1, 1)
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+    return `rgb(${r}, ${g}, ${b})`
   } catch {
     return fallback
   }
