@@ -1,4 +1,4 @@
-import { Code2, Github, Twitter, Linkedin } from 'lucide-react'
+import { Code2, Github } from 'lucide-react'
 
 const footerLinks = {
   Services: [
@@ -13,10 +13,10 @@ const footerLinks = {
   ],
 }
 
+// Only real, working profiles here. Add Twitter/LinkedIn back with real URLs
+// when available (dead href="#" links were removed).
 const socials = [
-  { Icon: Github, href: '#', label: 'GitHub' },
-  { Icon: Twitter, href: '#', label: 'Twitter' },
-  { Icon: Linkedin, href: '#', label: 'LinkedIn' },
+  { Icon: Github, href: 'https://github.com/drdeebtech', label: 'GitHub' },
 ]
 
 export default function Footer() {
@@ -40,6 +40,8 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-11 h-11 bg-surface border border-border hover:opacity-90 rounded-lg flex items-center justify-center transition-opacity duration-200 cursor-pointer"
                 >
                   <Icon className="w-4 h-4" aria-hidden="true" />

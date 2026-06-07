@@ -44,21 +44,22 @@ export default function CTA() {
   }
 
   return (
-    <section id="contact" className="relative py-24 px-4 sm:px-6">
+    <section id="contact" aria-labelledby="contact-heading" className="relative py-24 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
 
-          {/* ── Left ── */}
+          {/* ── Left ── (vertical reveal: a horizontal x-offset overflowed the
+              viewport on the right while pending whileInView) */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE.out }}
           >
             <span className="text-sm font-semibold text-accent tracking-widest uppercase mb-4 block">
               Let's Work Together
             </span>
-            <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-6 leading-tight">
+            <h2 id="contact-heading" className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-6 leading-tight">
               Ready to Build Something Great?
             </h2>
             <p className="text-muted text-lg mb-10 leading-relaxed">
@@ -87,8 +88,8 @@ export default function CTA() {
 
           {/* ── Right: Form ── */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.15, ease: EASE.out }}
           >

@@ -46,10 +46,10 @@ function MarqueeRow({ items, direction = 'left' }) {
 
 export default function TechStack() {
   return (
-    <section className="py-16 bg-surface overflow-hidden">
+    <section aria-labelledby="techstack-heading" className="py-16 bg-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
         <motion.div {...reveal}>
-          <h2 className="font-heading text-3xl lg:text-4xl font-bold text-fg">
+          <h2 id="techstack-heading" className="font-heading text-3xl lg:text-4xl font-bold text-fg">
             Technologies We Master
           </h2>
         </motion.div>

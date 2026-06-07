@@ -30,3 +30,4 @@ infrastructure/.claude-flow/
 .sources/
 .claude/skills/*
 !.claude/skills/gstack
+.claude/scheduled_tasks.lock

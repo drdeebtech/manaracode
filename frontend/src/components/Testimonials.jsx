@@ -1,102 +1,50 @@
 import { motion } from 'framer-motion'
-import { Star } from 'lucide-react'
+import { ShieldCheck, Workflow, Clock, KeyRound } from 'lucide-react'
 import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
-const testimonials = [
-  {
-    quote:
-      'Manaracode transformed our legacy platform into a modern, scalable system in just 3 months. Their attention to clean architecture is unmatched — every decision was deliberate and well-documented.',
-    name: 'Ahmed Al-Rashid',
-    role: 'CTO',
-    company: 'FinanceFlow',
-    initials: 'AA',
-    color: 'bg-accent',
-  },
-  {
-    quote:
-      'The team delivered our e-commerce platform on time and within budget. They handled everything from architecture to deployment and kept us informed every step of the way.',
-    name: 'Sarah Kim',
-    role: 'Founder',
-    company: 'ShopLux',
-    initials: 'SK',
-    color: 'bg-accent',
-  },
-  {
-    quote:
-      'Their DevOps expertise was a game-changer for us. Our deployment pipeline went from hours of manual work to a fully automated flow in under two weeks. Incredible team.',
-    name: 'Marcus Johnson',
-    role: 'VP Engineering',
-    company: 'CloudOps',
-    initials: 'MJ',
-    color: 'bg-accent-warm',
-  },
+// Honest "what you can expect" principles (true of every engagement) — replaces
+// the previous placeholder client testimonials. Reinstate a real testimonials
+// section here once there are verifiable client quotes to show.
+const principles = [
+  { Icon: ShieldCheck, title: 'Clean, tested code', desc: 'Typed, reviewed, and covered by tests before it ships.' },
+  { Icon: Workflow, title: 'Transparent process', desc: 'Clear scope, regular check-ins, and no surprises.' },
+  { Icon: Clock, title: 'Fast response', desc: 'We get back to you within 24 hours — every time.' },
+  { Icon: KeyRound, title: 'No lock-in', desc: 'You own the code and the infrastructure, start to finish.' },
 ]
 
 export default function Testimonials() {
   return (
-    <section className="py-24 px-4 sm:px-6 bg-bg">
+    <section aria-labelledby="expect-heading" className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
         <motion.div {...reveal} className="mb-16">
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
-            What Our Clients Say
+          <h2 id="expect-heading" className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
+            What you can expect
           </h2>
           <p className="text-lg text-muted max-w-xl">
-            We measure success by the impact we create for the businesses we work with.
+            How we work with every client, on every project.
           </p>
         </motion.div>
 
-        {/* Bento: the first testimonial is a full-width featured pull-quote with
-            a horizontal interior (quote beside the author block, so it fills the
-            width with no empty void); the other two sit below in two columns.
-            Stacks to one column below lg. */}
         <motion.div
           variants={revealStagger()}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid gap-6 lg:grid-cols-2"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {testimonials.map(({ quote, name, role, company, initials, color }, i) => {
-            const featured = i === 0
-            return (
+          {principles.map(({ Icon, title, desc }) => (
             <motion.div
-              key={name}
+              key={title}
               variants={revealItem}
-              className={`bg-surface p-8 shadow-sm border border-border flex flex-col ${
-                featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
-              }`}
+              className="bg-surface rounded-2xl p-8 shadow-sm border border-border"
             >
-              <div className={featured ? 'lg:flex-1' : ''}>
-                {/* Stars */}
-                <div className="flex gap-1 mb-5">
-                  {Array.from({ length: 5 }).map((_, s) => (
-                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p
-                  className={`leading-relaxed flex-1 ${
-                    featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance mb-0' : 'text-muted text-base mb-6'
-                  }`}
-                >
-                  "{quote}"
-                </p>
+              <div className="w-12 h-12 bg-accent-soft rounded-xl flex items-center justify-center mb-6">
+                <Icon className="w-6 h-6 text-accent" aria-hidden="true" />
               </div>
-
-              {/* Author */}
-              <div className={`flex items-center gap-3 ${featured ? 'lg:w-1/4 lg:shrink-0 mt-6 lg:mt-0' : ''}`}>
-                <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-on-accent text-sm font-bold flex-shrink-0`}>
-                  {initials}
-                </div>
-                <div>
-                  <p className="font-semibold text-fg text-sm">{name}</p>
-                  <p className="text-muted text-xs">{role}, {company}</p>
-                </div>
-              </div>
+              <h3 className="font-heading text-lg font-bold text-fg mb-2">{title}</h3>
+              <p className="text-muted text-base leading-relaxed">{desc}</p>
             </motion.div>
-            )
-          })}
+          ))}
         </motion.div>
       </div>
     </section>

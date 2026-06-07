@@ -14,7 +14,7 @@ describe('App smoke render', () => {
     expect(screen.getByRole('heading', { name: /services that drive growth/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /technologies we master/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /our process/i })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /what our clients say/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /what you can expect/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /ready to build something great/i })).toBeInTheDocument()
   })
 
