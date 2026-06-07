@@ -28,17 +28,21 @@ const BASE =
 
 const VARIANTS = {
   // `webgl` renders identically to `primary` at the DOM level; the optional 3D
-  // mesh is decorative and layered behind it (later phase). Tokens only — see
-  // styles/tokens.css. Transitions stay on opacity (compositor-friendly).
-  primary: 'bg-accent-warm text-white',
-  webgl: 'bg-accent-warm text-white',
+  // mesh is decorative and layered behind it. Tokens only — see styles/tokens.css.
+  // Transitions stay on opacity (compositor-friendly). text-on-accent is dark so
+  // it stays readable on the light/medium accent-warm fill (white fails ~1.7:1).
+  primary: 'bg-accent-warm text-on-accent',
+  webgl: 'bg-accent-warm text-on-accent',
   secondary: 'border-2 border-accent text-accent bg-transparent hover:bg-accent-soft',
   ghost: 'text-accent bg-transparent hover:bg-accent-soft',
 }
 
+// Every size meets the 44px touch target (WCAG 2.5.5). Sizes differ in text
+// and horizontal padding, not hit area, so a compact button is never an
+// inaccessible one.
 const SIZES = {
-  sm: 'text-sm px-3.5 py-2 min-h-[36px]',
-  md: 'text-sm px-5 py-3 min-h-[44px]', // >= 44px touch target
+  sm: 'text-sm px-4 py-2 min-h-[44px]',
+  md: 'text-sm px-5 py-3 min-h-[44px]',
   lg: 'text-base px-7 py-3.5 min-h-[52px]',
 }
 

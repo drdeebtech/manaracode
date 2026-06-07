@@ -11,7 +11,32 @@ import { getGsap } from './gsapHooks'
 // controls own all interaction; this layer is aria-hidden.
 
 const GLOW_PAD = 1.6 // glow extends beyond the button
-const ACCENT = '#60a5fa'
+
+// Resolve a CSS custom property (e.g. an oklch token) to an rgb/hex string the
+// renderer understands — so the 3D layer matches the active theme accent.
+// getComputedStyle returns the color in its authored model, and modern browsers
+// keep oklch() as oklch(); three.js can't parse that, so we round-trip through a
+// canvas 2D context, whose fillStyle getter always serializes to #rrggbb/rgba().
+function cssVarColor(varName, fallback) {
+  try {
+    const probe = document.createElement('span')
+    probe.style.color = `var(${varName}, ${fallback})`
+    probe.style.display = 'none'
+    document.body.appendChild(probe)
+    const computed = getComputedStyle(probe).color
+    document.body.removeChild(probe)
+    // Rasterize one pixel and read its sRGB bytes back: getImageData always
+    // returns 0-255 rgb regardless of the input model (oklch, color(), etc.),
+    // so three.js gets a model it can parse.
+    const ctx = document.createElement('canvas').getContext('2d')
+    ctx.fillStyle = computed || fallback
+    ctx.fillRect(0, 0, 1, 1)
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+    return `rgb(${r}, ${g}, ${b})`
+  } catch {
+    return fallback
+  }
+}
 
 export class Engine {
   /** @param {HTMLCanvasElement} canvas */
@@ -26,6 +51,8 @@ export class Engine {
     this.running = false
     this.lastTime = 0
     this.pointer = { x: 0, y: 0 }
+    this.accent = cssVarColor('--color-accent', '#60a5fa') // matches the active theme
+    this.accent2 = cssVarColor('--color-accent-2', '#7c3aed') // secondary hue for the wireframe shell
 
     this.resize = this.resize.bind(this)
     this.onVisibility = this.onVisibility.bind(this)
@@ -79,10 +106,25 @@ export class Engine {
     const anchor = document.querySelector('[data-three-hero]')
     if (!anchor) return
     const group = new THREE.Group()
-    const geo = new THREE.IcosahedronGeometry(1, 0)
-    const mat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.35, metalness: 0.6, flatShading: true })
+    const geo = new THREE.IcosahedronGeometry(1, 1)
+    const mat = new THREE.MeshStandardMaterial({
+      color: this.accent,
+      roughness: 0.3,
+      metalness: 0.65,
+      flatShading: true,
+      emissive: this.accent,
+      emissiveIntensity: 0.12,
+    })
     const mesh = new THREE.Mesh(geo, mat)
     group.add(mesh)
+    // Electric secondary-hue wireframe shell, parented to the mesh so it inherits
+    // the same scale + spin and reads as a single two-tone object (maximalist
+    // depth without a second draw-loop). Slightly larger so the edges float.
+    const wire = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.06, 1),
+      new THREE.MeshBasicMaterial({ color: this.accent2, wireframe: true, transparent: true, opacity: 0.35 }),
+    )
+    mesh.add(wire)
     group.add(new THREE.AmbientLight(0xffffff, 0.6))
     const dir = new THREE.DirectionalLight(0xffffff, 1.1)
     dir.position.set(2, 3, 4)
@@ -113,7 +155,7 @@ export class Engine {
     // Add glows for new registrations.
     for (const [id] of entries) {
       if (!this.glows.has(id)) {
-        const mesh = createGlowMesh()
+        const mesh = createGlowMesh(this.accent)
         this.scene.add(mesh)
         this.glows.set(id, mesh)
       }
@@ -138,17 +180,22 @@ export class Engine {
       mesh.position.set(p.x, p.y, 0)
       mesh.scale.set(p.width * GLOW_PAD, p.height * GLOW_PAD, 1)
       const hovered = entry.el.matches(':hover')
-      const target = hovered ? 0.55 : 0.0
+      const target = hovered ? 0.6 : 0.12 // faint at rest so the glow is a designed presence
       mesh.material.opacity += (target - mesh.material.opacity) * Math.min(dt * 10, 1)
     }
 
     if (this.hero) {
       const p = rectToPlacement(this.hero.userData.anchor.getBoundingClientRect())
-      const r = Math.min(this.hero.userData.anchor.clientWidth, this.hero.userData.anchor.clientHeight) * 0.32
+      const r = Math.min(this.hero.userData.anchor.clientWidth, this.hero.userData.anchor.clientHeight) * 0.42
       this.hero.position.set(p.x, p.y, 1)
       this.hero.userData.mesh.scale.setScalar(r)
-      // Subtle pointer parallax (transform-only, cheap).
-      this.hero.userData.mesh.rotation.x = this.pointer.y * 0.3
+      // Real pointer reactivity on both axes, eased toward target so it glides
+      // rather than snaps (transform-only, cheap). GSAP owns the continuous
+      // y-spin of the mesh, so pointer-x drives the parent group instead.
+      const mesh = this.hero.userData.mesh
+      const k = Math.min(dt * 4, 1)
+      mesh.rotation.x += (this.pointer.y * 0.3 - mesh.rotation.x) * k
+      this.hero.rotation.y += (this.pointer.x * 0.25 - this.hero.rotation.y) * k
     }
 
     this.renderer.render(this.scene, this.camera)
@@ -166,8 +213,13 @@ export class Engine {
     }
     this.glows.clear()
     if (this.hero) {
-      this.hero.userData.mesh.geometry.dispose()
-      this.hero.userData.mesh.material.dispose()
+      // Dispose the solid mesh and its parented wireframe shell.
+      this.hero.traverse((o) => {
+        if (o.isMesh) {
+          o.geometry.dispose()
+          o.material.dispose()
+        }
+      })
     }
     this.renderer.dispose()
   }

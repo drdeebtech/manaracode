@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
+import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
 const testimonials = [
   {
@@ -35,49 +36,57 @@ export default function Testimonials() {
   return (
     <section className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
-            Social Proof
-          </span>
+        <motion.div {...reveal} className="mb-16">
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             What Our Clients Say
           </h2>
-          <p className="text-lg text-muted max-w-xl mx-auto">
+          <p className="text-lg text-muted max-w-xl">
             We measure success by the impact we create for the businesses we work with.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map(({ quote, name, role, company, initials, color }, i) => (
+        {/* Bento: the first testimonial is a full-width featured pull-quote with
+            a horizontal interior (quote beside the author block, so it fills the
+            width with no empty void); the other two sit below in two columns.
+            Stacks to one column below lg. */}
+        <motion.div
+          variants={revealStagger()}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid gap-6 lg:grid-cols-2"
+        >
+          {testimonials.map(({ quote, name, role, company, initials, color }, i) => {
+            const featured = i === 0
+            return (
             <motion.div
               key={name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="bg-surface rounded-2xl p-8 shadow-sm border border-border flex flex-col"
+              variants={revealItem}
+              className={`bg-surface p-8 shadow-sm border border-border flex flex-col ${
+                featured ? 'rounded-3xl lg:col-span-2 lg:flex-row lg:items-center lg:gap-10' : 'rounded-2xl'
+              }`}
             >
-              {/* Stars */}
-              <div className="flex gap-1 mb-5">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
+              <div className={featured ? 'lg:flex-1' : ''}>
+                {/* Stars */}
+                <div className="flex gap-1 mb-5">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p
+                  className={`leading-relaxed flex-1 ${
+                    featured ? 'text-fg text-xl lg:text-2xl font-medium text-balance mb-0' : 'text-muted text-base mb-6'
+                  }`}
+                >
+                  "{quote}"
+                </p>
               </div>
 
-              {/* Quote */}
-              <p className="text-muted leading-relaxed text-sm flex-1 mb-6">
-                "{quote}"
-              </p>
-
               {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+              <div className={`flex items-center gap-3 ${featured ? 'lg:w-1/4 lg:shrink-0 mt-6 lg:mt-0' : ''}`}>
+                <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
                   {initials}
                 </div>
                 <div>
@@ -86,8 +95,9 @@ export default function Testimonials() {
                 </div>
               </div>
             </motion.div>
-          ))}
-        </div>
+            )
+          })}
+        </motion.div>
       </div>
     </section>
   )

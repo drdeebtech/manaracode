@@ -4,9 +4,9 @@
  * tailwind.config.js: bg-surface, text-fg, border-border, ring-ring, etc.),
  * never hardcoded color ramps.
  *
- * Light is the default. The dark / maximalist direction (DESIGN.md) activates
- * by setting `data-theme="dark"` on <html> (a later phase) — every token below
- * has a dark override, so no component code changes when the theme flips.
+ * The dark / maximalist direction (DESIGN.md) is ACTIVE — `data-theme="dark"`
+ * is set on <html> (index.html). Every token has a dark override and a light
+ * fallback, so flipping the attribute swaps the whole theme with no code changes.
  */
 
 :root {
@@ -21,12 +21,20 @@
   /* Accents */
   --color-accent: #2563eb;
   --color-accent-warm: #22c55e; /* primary CTA fill */
+  --color-accent-2: #7c3aed; /* secondary hue — atmosphere + 3D only, not UI controls */
+  --color-on-accent: #0b1220; /* readable text on accent-warm fills (light/medium in both themes) */
 
   /* Semantic (foreground/icon strength) */
   --color-success: #16a34a;
   --color-warning: #d97706;
   --color-error: #ef4444;
   --color-info: #2563eb;
+
+  /* Terminal motif — an editor surface that is always dark in both themes (a
+     code terminal is conventionally dark), brand-tinted so it stays on-system
+     instead of raw neutral gray. ANSI line colors live in the component. */
+  --color-terminal-bg: oklch(12% 0.03 265);
+  --color-terminal-bar: oklch(17% 0.03 265);
 
   /* Soft tints — chip backgrounds, icon halos, skeleton */
   --color-neutral-soft: #dbeafe;
@@ -62,6 +70,7 @@
 
   /* Layering */
   --z-canvas: -1;
+  --z-raised: 10; /* in-flow decorative lift (e.g. hero floating cards over the terminal) */
   --z-overlay: 50;
   --z-modal: 60;
   --z-toast: 70;
@@ -78,6 +87,7 @@
 
   --color-accent: oklch(64% 0.19 255);
   --color-accent-warm: oklch(82% 0.17 95);
+  --color-accent-2: oklch(62% 0.22 300); /* electric violet — secondary atmosphere/3D hue */
 
   --color-success: oklch(72% 0.17 150);
   --color-warning: oklch(80% 0.15 80);

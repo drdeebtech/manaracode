@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { reveal } from '../styles/tokens'
 
 const row1 = [
   { name: 'React',      color: '#61DAFB', bg: '#E8F9FD' },
@@ -18,12 +19,11 @@ const row2 = [
   { name: 'Linux',      color: '#D48806', bg: '#FFFBE6' },
 ]
 
-function Badge({ name, color, bg }) {
+function Badge({ name, color }) {
   return (
-    <div
-      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border shadow-sm whitespace-nowrap mx-3 flex-shrink-0"
-      style={{ backgroundColor: bg }}
-    >
+    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border bg-neutral-soft shadow-sm whitespace-nowrap mx-3 flex-shrink-0">
+      {/* Brand-colored dot stays; the chip surface is a theme token so the
+          near-white label is readable in dark (hardcoded light bg was invisible). */}
       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
       <span className="text-sm font-semibold text-fg">{name}</span>
     </div>
@@ -46,18 +46,9 @@ function MarqueeRow({ items, direction = 'left' }) {
 
 export default function TechStack() {
   return (
-    <section className="py-20 bg-surface overflow-hidden">
+    <section className="py-16 bg-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          <span className="text-sm font-semibold text-muted tracking-widest uppercase mb-3 block">
-            Our Stack
-          </span>
+        <motion.div {...reveal}>
           <h2 className="font-heading text-3xl lg:text-4xl font-bold text-fg">
             Technologies We Master
           </h2>

@@ -34,10 +34,10 @@ export function getGlowTexture(color = '#60a5fa') {
  * it never occludes.
  * @returns {THREE.Mesh}
  */
-export function createGlowMesh() {
+export function createGlowMesh(color = '#60a5fa') {
   const geometry = new THREE.PlaneGeometry(1, 1)
   const material = new THREE.MeshBasicMaterial({
-    map: getGlowTexture(),
+    map: getGlowTexture(color),
     transparent: true,
     opacity: 0,
     blending: THREE.AdditiveBlending,
