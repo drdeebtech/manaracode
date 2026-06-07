@@ -37,10 +37,10 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-24 px-4 sm:px-6 bg-surface">
+    <section id="services" aria-labelledby="services-heading" className="py-24 px-4 sm:px-6 bg-surface">
       <div className="max-w-7xl mx-auto">
         <motion.div {...reveal} className="mb-16">
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
+          <h2 id="services-heading" className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Services That Drive Growth
           </h2>
           <p className="text-lg text-muted max-w-2xl leading-relaxed">

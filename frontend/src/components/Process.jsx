@@ -31,10 +31,10 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="process" className="py-24 px-4 sm:px-6 bg-bg">
+    <section id="process" aria-labelledby="process-heading" className="py-24 px-4 sm:px-6 bg-bg">
       <div className="max-w-7xl mx-auto">
         <motion.div {...reveal} className="mb-16">
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
+          <h2 id="process-heading" className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-5">
             Our Process
           </h2>
           <p className="text-lg text-muted max-w-2xl leading-relaxed">

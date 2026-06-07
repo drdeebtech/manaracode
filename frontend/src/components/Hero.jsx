@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle, Zap } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '../ui'
 import { revealStagger, revealItem } from '../styles/tokens'
 
@@ -13,8 +13,6 @@ const codeLines = [
   { text: '> Project ready 🚀', color: 'text-yellow-300' },
 ]
 
-const avatarColors = ['bg-blue-400', 'bg-blue-600', 'bg-indigo-500', 'bg-blue-800']
-
 const scrollTo = (id) => () => {
   // Honor reduced-motion: the explicit `behavior:'smooth'` would otherwise
   // override the CSS `scroll-behavior:auto` reduced-motion guard.
@@ -25,7 +23,7 @@ const scrollTo = (id) => () => {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen pt-28 pb-20 px-4 sm:px-6">
+    <section aria-labelledby="hero-heading" className="relative min-h-screen pt-28 pb-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
@@ -41,6 +39,7 @@ export default function Hero() {
             </motion.div>
 
             <motion.h1
+              id="hero-heading"
               variants={revealItem}
               className="font-heading font-bold text-fg tracking-tight leading-[1.04] text-balance mb-6 text-[clamp(2.75rem,1.2rem+5vw,5rem)]"
             >
@@ -68,20 +67,13 @@ export default function Hero() {
               </Button>
             </motion.div>
 
-            <motion.div variants={revealItem} className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                {avatarColors.map((color, i) => (
-                  <div
-                    key={i}
-                    className={`w-8 h-8 rounded-full ${color} border-2 border-surface flex items-center justify-center text-white text-xs font-bold`}
-                  >
-                    {String.fromCharCode(65 + i)}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-muted">
-                Trusted by <span className="font-semibold text-fg">30+ clients</span> worldwide
-              </p>
+            <motion.div
+              variants={revealItem}
+              className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted"
+            >
+              <span className="font-semibold text-fg">Full-stack delivery</span>
+              <span aria-hidden="true">·</span>
+              <span>web, mobile, APIs &amp; cloud</span>
             </motion.div>
           </motion.div>
 
@@ -120,38 +112,6 @@ export default function Hero() {
                   transition={{ duration: 1, repeat: Infinity }}
                   className="inline-block w-2 h-4 bg-green-400 ml-1 align-middle"
                 />
-              </div>
-            </motion.div>
-
-            {/* Floating card: Projects */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.6 }}
-              className="absolute bottom-12 -left-4 bg-surface rounded-2xl shadow-xl shadow-black/20 border border-border px-5 py-4 flex items-center gap-3 z-[var(--z-raised)]"
-            >
-              <div className="w-10 h-10 bg-accent-soft rounded-xl flex items-center justify-center flex-shrink-0">
-                <Zap className="w-5 h-5 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold font-heading text-fg leading-none">50+</p>
-                <p className="text-xs text-muted mt-0.5">Projects Delivered</p>
-              </div>
-            </motion.div>
-
-            {/* Floating card: Satisfaction */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.8 }}
-              className="absolute bottom-0 right-4 bg-surface rounded-2xl shadow-xl shadow-black/20 border border-border px-5 py-4 flex items-center gap-3 z-[var(--z-raised)]"
-            >
-              <div className="w-10 h-10 bg-success-soft rounded-xl flex items-center justify-center flex-shrink-0">
-                <CheckCircle className="w-5 h-5 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold font-heading text-fg leading-none">99%</p>
-                <p className="text-xs text-muted mt-0.5">Client Satisfaction</p>
               </div>
             </motion.div>
 
