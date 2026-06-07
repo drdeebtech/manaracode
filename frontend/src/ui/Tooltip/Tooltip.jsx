@@ -28,6 +28,11 @@ export function Tooltip({ label, side = 'top', children, className }) {
   const id = useId()
 
   return (
+    // Passive positioning wrapper: the real interactive element is the cloned
+    // child (it keeps its own semantics + receives aria-describedby). These
+    // handlers only show/hide the tip on the child's hover/focus, so the wrapper
+    // intentionally has no role of its own.
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <span
       className="relative inline-flex"
       onMouseEnter={() => setOpen(true)}

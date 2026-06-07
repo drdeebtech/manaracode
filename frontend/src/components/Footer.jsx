@@ -70,8 +70,8 @@ export default function Footer() {
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted">© 2025 Manaracode. All rights reserved.</p>
           <div className="flex gap-6 text-sm text-muted">
-            <a href="#" className="hover:text-fg transition-opacity cursor-pointer">Privacy Policy</a>
-            <a href="#" className="hover:text-fg transition-opacity cursor-pointer">Terms of Service</a>
+            <a href="/privacy" className="hover:text-fg transition-opacity cursor-pointer">Privacy Policy</a>
+            <a href="/terms" className="hover:text-fg transition-opacity cursor-pointer">Terms of Service</a>
           </div>
         </div>
       </div>

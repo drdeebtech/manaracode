@@ -32,7 +32,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2 font-heading font-bold text-fg">
+        <a href="#main" className="flex items-center gap-2 font-heading font-bold text-fg">
           <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
             <Code2 className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
