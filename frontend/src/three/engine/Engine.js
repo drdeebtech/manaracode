@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { getEntries, subscribe } from './registry'
 import { rectToPlacement, orthoFrustum, clampDpr } from './mapping'
-import { createGlowMesh } from './glow'
+import { createGlowMesh, disposeGlowTextures } from './glow'
 import { getGsap } from './gsapHooks'
 
 // THE single WebGL context for the whole app. One renderer, one scene, one
@@ -54,6 +54,13 @@ export class Engine {
     this.pointer = { x: 0, y: 0 }
     this.accent = cssVarColor('--color-accent', '#60a5fa') // matches the active theme
     this.accent2 = cssVarColor('--color-accent-2', '#7c3aed') // secondary hue for the wireframe shell
+    // SceneCanvas already gates the whole layer off under reduced-motion; this is
+    // defense-in-depth for a mid-session toggle (the RAF spin/tilt below run
+    // outside framer-motion's MotionConfig, so they need their own guard).
+    this.reduceMotion =
+      typeof window !== 'undefined' && window.matchMedia
+        ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        : false
 
     this.resize = this.resize.bind(this)
     this.onVisibility = this.onVisibility.bind(this)
@@ -136,9 +143,13 @@ export class Engine {
     this.scene.add(group)
     this.hero = group
     // GSAP owns the 3D entrance + continuous spin (role split: GSAP=timelines).
+    // Skip the continuous spin under reduced-motion (the entrance pop is a one-off
+    // and stays); pointer tilt is also gated in tick().
     getGsap().then(({ gsap }) => {
       gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'expo.out' })
-      gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 })
+      if (!this.reduceMotion) {
+        gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 })
+      }
     })
   }
 
@@ -193,10 +204,12 @@ export class Engine {
       // Real pointer reactivity on both axes, eased toward target so it glides
       // rather than snaps (transform-only, cheap). GSAP owns the continuous
       // y-spin of the mesh, so pointer-x drives the parent group instead.
-      const mesh = this.hero.userData.mesh
-      const k = Math.min(dt * 4, 1)
-      mesh.rotation.x += (this.pointer.y * 0.3 - mesh.rotation.x) * k
-      this.hero.rotation.y += (this.pointer.x * 0.25 - this.hero.rotation.y) * k
+      if (!this.reduceMotion) {
+        const mesh = this.hero.userData.mesh
+        const k = Math.min(dt * 4, 1)
+        mesh.rotation.x += (this.pointer.y * 0.3 - mesh.rotation.x) * k
+        this.hero.rotation.y += (this.pointer.x * 0.25 - this.hero.rotation.y) * k
+      }
     }
 
     this.renderer.render(this.scene, this.camera)
@@ -222,6 +235,7 @@ export class Engine {
         }
       })
     }
+    disposeGlowTextures() // free the per-color cached glow textures
     this.renderer.dispose()
   }
 }
