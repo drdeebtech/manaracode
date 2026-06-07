@@ -9,14 +9,16 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 )
 
 type server struct {
-	store   *Store
-	limiter *RateLimiter
-	mailer  Mailer
+	store    *Store
+	limiter  *RateLimiter
+	mailer   Mailer
+	inflight sync.WaitGroup // tracks background email sends for graceful drain
 }
 
 // newServer wires the application dependencies from configuration: it opens
@@ -61,47 +63,86 @@ func main() {
 	flag.Parse()
 
 	if *healthcheck {
-		resp, err := http.Get("http://localhost:8080/healthz")
-		if err != nil || resp.StatusCode != http.StatusOK {
-			os.Exit(1)
-		}
-		os.Exit(0)
+		os.Exit(runHealthcheck())
 	}
 
 	// Structured JSON logging to stdout — container-friendly.
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
-	srv, err := newServer(loadConfig())
-	if err != nil {
-		slog.Error("init server", "err", err)
+	if err := run(); err != nil {
+		slog.Error("fatal", "err", err)
 		os.Exit(1)
 	}
+}
+
+// runHealthcheck probes /healthz with a bounded timeout and always closes the
+// response body. Returns the process exit code (0 healthy, 1 otherwise).
+func runHealthcheck() int {
+	client := &http.Client{Timeout: 3 * time.Second}
+	resp, err := client.Get("http://localhost:8080/healthz")
+	if err != nil {
+		return 1
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return 1
+	}
+	return 0
+}
+
+// run wires dependencies and serves until shutdown. Returning an error (instead
+// of calling os.Exit deep in a goroutine) guarantees the deferred Close/Stop
+// run on every exit path — including a failed ListenAndServe.
+func run() error {
+	srv, err := newServer(loadConfig())
+	if err != nil {
+		return fmt.Errorf("init server: %w", err)
+	}
 	defer srv.store.Close()
+	defer srv.limiter.Stop()
 
 	// Graceful shutdown on SIGINT / SIGTERM.
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	serve(srv.httpServer(), quit)
+	if err := serve(srv.httpServer(), quit); err != nil {
+		return err
+	}
+
+	// Let in-flight background email sends finish, bounded so a hung relay can't
+	// stall shutdown indefinitely.
+	drained := make(chan struct{})
+	go func() { srv.inflight.Wait(); close(drained) }()
+	select {
+	case <-drained:
+	case <-time.After(5 * time.Second):
+		slog.Warn("timed out waiting for in-flight email sends")
+	}
+	return nil
 }
 
-// serve runs httpSrv until a value arrives on quit (or it is closed), then
-// shuts the server down gracefully with a 10-second deadline.
-func serve(httpSrv *http.Server, quit <-chan os.Signal) {
+// serve runs httpSrv until a value arrives on quit (or it is closed) or the
+// server fails to start, then shuts down gracefully with a 10-second deadline.
+func serve(httpSrv *http.Server, quit <-chan os.Signal) error {
+	serverErr := make(chan error, 1)
 	go func() {
 		slog.Info("listening", "addr", httpSrv.Addr)
 		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("server error", "err", err)
-			os.Exit(1)
+			serverErr <- err
 		}
 	}()
 
-	<-quit
+	select {
+	case err := <-serverErr:
+		return fmt.Errorf("server error: %w", err)
+	case <-quit:
+	}
 
 	slog.Info("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := httpSrv.Shutdown(ctx); err != nil {
-		slog.Error("shutdown error", "err", err)
+		return fmt.Errorf("shutdown: %w", err)
 	}
+	return nil
 }

@@ -17,16 +17,25 @@ type ipEntry struct {
 
 // RateLimiter manages per-IP token-bucket limiters (3 requests per minute).
 type RateLimiter struct {
-	mu      sync.Mutex
-	clients map[string]*ipEntry
+	mu       sync.Mutex
+	clients  map[string]*ipEntry
+	done     chan struct{}
+	stopOnce sync.Once
 }
 
 func NewRateLimiter() *RateLimiter {
 	rl := &RateLimiter{
 		clients: make(map[string]*ipEntry),
+		done:    make(chan struct{}),
 	}
 	go rl.cleanup()
 	return rl
+}
+
+// Stop ends the background cleanup goroutine. Idempotent — safe to call more
+// than once (the sync.Once guards against a double channel close panic).
+func (rl *RateLimiter) Stop() {
+	rl.stopOnce.Do(func() { close(rl.done) })
 }
 
 func (rl *RateLimiter) get(ip string) *rate.Limiter {
@@ -50,12 +59,17 @@ func (rl *RateLimiter) Allow(ip string) bool {
 	return rl.get(ip).Allow()
 }
 
-// cleanup removes stale entries every minute.
+// cleanup removes stale entries every minute until Stop is called.
 func (rl *RateLimiter) cleanup() {
 	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
-	for range ticker.C {
-		rl.removeStale(3 * time.Minute)
+	for {
+		select {
+		case <-ticker.C:
+			rl.removeStale(3 * time.Minute)
+		case <-rl.done:
+			return
+		}
 	}
 }
 
@@ -71,20 +85,35 @@ func (rl *RateLimiter) removeStale(maxAge time.Duration) {
 }
 
 // clientIP extracts the originating IP from the request.
-// nginx sets X-Real-IP; fall back to X-Forwarded-For, then RemoteAddr.
+//
+// Proxy-set headers (X-Real-IP, X-Forwarded-For) are honored ONLY when the
+// direct peer (RemoteAddr) is a trusted proxy — a loopback or private-network
+// address. In this deployment the Go backend's port is never published; it is
+// reachable only through nginx on the private Docker network, so a legitimate
+// request always arrives from a private peer. A request arriving from a public
+// peer (i.e. someone hitting the backend directly) cannot be trusted to set
+// these headers, so we fall back to its real RemoteAddr. This closes the
+// rate-limiter bypass where a client forges X-Forwarded-For to spoof its IP.
 func clientIP(r *http.Request) string {
-	if xrip := r.Header.Get("X-Real-IP"); xrip != "" {
-		return strings.TrimSpace(xrip)
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		host = r.RemoteAddr
+	}
+
+	peer := net.ParseIP(host)
+	trusted := peer != nil && (peer.IsLoopback() || peer.IsPrivate())
+	if !trusted {
+		return host
+	}
+
+	if xrip := strings.TrimSpace(r.Header.Get("X-Real-IP")); xrip != "" {
+		return xrip
 	}
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 		if i := strings.Index(xff, ","); i >= 0 {
 			return strings.TrimSpace(xff[:i])
 		}
 		return strings.TrimSpace(xff)
-	}
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr
 	}
 	return host
 }

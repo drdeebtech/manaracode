@@ -59,17 +59,26 @@ func (s *server) handleContact(w http.ResponseWriter, r *http.Request) {
 	contact := Contact{Name: req.Name, Email: req.Email, Message: req.Message, IP: ip}
 
 	if err := s.store.SaveContact(contact); err != nil {
-		slog.Error("save contact", "err", err, "ip", ip)
+		// No PII in logs (no name/email/ip) — just that a save failed.
+		slog.Error("save contact failed", "err", err)
 		writeError(w, http.StatusInternalServerError, "internal error")
 		return
 	}
 
-	slog.Info("contact saved", "name", contact.Name, "email", contact.Email, "ip", ip)
+	// No PII in logs: a coarse signal only.
+	slog.Info("contact saved")
 
-	if err := s.mailer.SendContactNotification(contact); err != nil {
-		// Non-fatal: contact is saved; email failure is logged but not surfaced to the user.
-		slog.Error("send notification email", "err", err, "name", contact.Name)
-	}
+	// Send the notification email off the request path so a slow/unresponsive SMTP
+	// relay can never delay the user's response or hold the handler goroutine.
+	// inflight lets graceful shutdown drain pending sends (and tests await them).
+	s.inflight.Add(1)
+	go func(c Contact) {
+		defer s.inflight.Done()
+		if err := s.mailer.SendContactNotification(c); err != nil {
+			// Non-fatal: contact is already saved. No PII in the log line.
+			slog.Error("send notification email failed", "err", err)
+		}
+	}(contact)
 
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
