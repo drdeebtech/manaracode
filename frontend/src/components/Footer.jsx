@@ -21,13 +21,13 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="bg-surface text-muted py-16 px-4 sm:px-6">
+    <footer className="bg-surface text-muted pt-16 pb-28 md:pb-16 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-3 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
-                <Code2 className="w-4 h-4 text-white" />
+                <Code2 className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
               <span className="font-heading font-bold text-fg text-lg tracking-tight">manaracode</span>
             </div>
@@ -40,9 +40,9 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-9 h-9 bg-surface border border-border hover:opacity-90 rounded-lg flex items-center justify-center transition-opacity duration-200 cursor-pointer"
+                  className="w-11 h-11 bg-surface border border-border hover:opacity-90 rounded-lg flex items-center justify-center transition-opacity duration-200 cursor-pointer"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                 </a>
               ))}
             </div>
@@ -50,7 +50,7 @@ export default function Footer() {
 
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="font-heading font-semibold text-fg mb-4">{title}</h4>
+              <h3 className="font-heading font-semibold text-fg mb-4">{title}</h3>
               <ul className="space-y-3">
                 {links.map(({ label, href }) => (
                   <li key={label}>

@@ -6,6 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `manaracode` is a frontend/UI project using `framer-motion` for animations. No framework has been committed yet — when one is chosen, update this file accordingly.
 
+## Pull Request Review (mandatory)
+
+Run the CodeRabbit CLI on every PR before requesting human review or merging.
+
+```bash
+coderabbit review --agent     # structured findings for the agent to triage
+# or: coderabbit review --plain   for a human-readable pass
+```
+
+Workflow for every PR:
+1. Open the PR (or have the branch ready vs `main`).
+2. Run `coderabbit review --agent`.
+3. Triage each finding: fix still-valid issues with minimal diffs, skip the rest with a brief reason.
+4. Re-run build + tests, then hand off for merge.
+
+The CLI is installed at `~/.local/bin/coderabbit` (authenticated as `github/drdeebtech`). This is in addition to the GitHub CodeRabbit bot — the CLI catches issues locally before the PR is even pushed.
+
 ## Dependencies
 
 - `framer-motion` — animation library (already installed via `npm install`)
@@ -37,6 +54,8 @@ python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack <stac
 ```
 
 **Hierarchical design system retrieval:** When building a specific page, check `design-system/pages/<page>.md` first; its rules override `design-system/MASTER.md`.
+
+**Active design system (read before UI work):** `design-system/manaracode/MASTER.md` is the committed source of truth for this project (dark, motion-driven dev-studio system).
 
 ## Pre-Delivery UI Checklist
 

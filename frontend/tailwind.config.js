@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"DM Sans"', 'sans-serif'],
+        heading: ['"Bricolage Grotesque"', 'sans-serif'],
+        body: ['"Hanken Grotesk"', 'sans-serif'],
       },
       // Semantic colors backed by CSS-variable design tokens (styles/tokens.css).
       // Components use these (bg-surface, text-fg, border-border, ring-ring,
@@ -22,6 +22,7 @@ export default {
           warm: 'var(--color-accent-warm)',
           soft: 'var(--color-accent-soft)',
         },
+        'on-accent': 'var(--color-on-accent)',
         success: {
           DEFAULT: 'var(--color-success)',
           soft: 'var(--color-success-soft)',
@@ -36,6 +37,10 @@ export default {
         },
         info: 'var(--color-info)',
         'neutral-soft': 'var(--color-neutral-soft)',
+        terminal: {
+          bg: 'var(--color-terminal-bg)',
+          bar: 'var(--color-terminal-bar)',
+        },
       },
     },
   },

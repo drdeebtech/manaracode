@@ -1,16 +1,18 @@
 import * as THREE from 'three'
 
 // A soft radial-gradient texture used as an additive glow behind buttons.
-// Generated once on a 2D canvas and shared across all glow meshes.
+// Generated on a 2D canvas and cached PER COLOR so different accent colors get
+// their own texture (a single global cache would return the first color forever).
 
-let glowTexture = null
+const glowTextures = new Map() // color -> THREE.CanvasTexture
 
 /**
  * @param {string} [color='#60a5fa'] center color of the glow
  * @returns {THREE.Texture}
  */
 export function getGlowTexture(color = '#60a5fa') {
-  if (glowTexture) return glowTexture
+  const cached = glowTextures.get(color)
+  if (cached) return cached
   const size = 128
   const canvas = document.createElement('canvas')
   canvas.width = size
@@ -23,9 +25,16 @@ export function getGlowTexture(color = '#60a5fa') {
   ctx.globalAlpha = 1
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, size, size)
-  glowTexture = new THREE.CanvasTexture(canvas)
-  glowTexture.colorSpace = THREE.SRGBColorSpace
-  return glowTexture
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  glowTextures.set(color, texture)
+  return texture
+}
+
+/** Dispose every cached glow texture and clear the cache (call on engine teardown). */
+export function disposeGlowTextures() {
+  for (const texture of glowTextures.values()) texture.dispose()
+  glowTextures.clear()
 }
 
 /**
@@ -34,10 +43,10 @@ export function getGlowTexture(color = '#60a5fa') {
  * it never occludes.
  * @returns {THREE.Mesh}
  */
-export function createGlowMesh() {
+export function createGlowMesh(color = '#60a5fa') {
   const geometry = new THREE.PlaneGeometry(1, 1)
   const material = new THREE.MeshBasicMaterial({
-    map: getGlowTexture(),
+    map: getGlowTexture(color),
     transparent: true,
     opacity: 0,
     blending: THREE.AdditiveBlending,
