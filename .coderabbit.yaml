@@ -1,0 +1,24 @@
+# CodeRabbit configuration — https://docs.coderabbit.ai/guides/configure-coderabbit
+# Goal: keep automated review useful but low-noise so it does not create
+# conversation-resolution churn on every push. The CodeRabbit CLI is run locally
+# before each PR (see CLAUDE.md), so the bot is a backstop, not the primary gate.
+language: en-US
+early_access: false
+
+reviews:
+  profile: chill # fewer trivial nitpicks than "assertive"
+  request_changes_workflow: false # never post a blocking "changes requested" review
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false # don't review draft PRs
+    base_branches:
+      - main
+  # Incremental reviews comment only on what changed since the last push instead
+  # of re-surfacing the whole diff, which reduces repeated nitpick threads.
+  auto_incremental_review: true
+
+chat:
+  auto_reply: true
