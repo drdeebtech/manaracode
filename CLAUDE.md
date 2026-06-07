@@ -21,7 +21,22 @@ Workflow for every PR:
 3. Triage each finding: fix still-valid issues with minimal diffs, skip the rest with a brief reason.
 4. Re-run build + tests, then hand off for merge.
 
-The CLI is installed at `~/.local/bin/coderabbit` (authenticated as `github/drdeebtech`). This is in addition to the GitHub CodeRabbit bot — the CLI catches issues locally before the PR is even pushed.
+The CLI is installed at `~/.local/bin/coderabbit` (authenticated as `github/drdeebtech`). This is in addition to the GitHub CodeRabbit bot — the CLI catches issues locally before the PR is even pushed. Bot noise is tuned down via `.coderabbit.yaml` (chill profile, incremental reviews).
+
+## Version control & PR workflow (mandatory)
+
+`main` is protected: required checks (Security Scan, Backend (Go), Frontend (Vite)), strict/up-to-date, linear history, conversation-resolution, enforce_admins. Direct pushes to `main` are rejected — every change lands via a PR. Follow this exactly to keep the flow flawless:
+
+1. **Branch from fresh main.** `git checkout main && git pull --ff-only`, then `git checkout -b <type>/<topic>`. One branch = one PR = one merge. **Never reuse a branch after its PR merged** (squash-merge retires it; new commits there never reach main — this is what stranded the Phase 5 work).
+2. **Implement + verify locally** (build + tests green; `gofmt`/`go vet` for Go; the impeccable detector for UI).
+3. **Run `coderabbit review --agent`** and triage before pushing (see above).
+4. **Push, open PR**, let CI run.
+5. **Resolve every CodeRabbit bot thread** (fix valid ones, reply-and-resolve the rest via GraphQL `addPullRequestReviewThreadReply` + `resolveReviewThread`) — conversation-resolution gates the merge.
+6. **Merge with `gh pr merge <n> --squash --auto --delete-branch`.** Use `--auto` so GitHub merges the instant all gates pass — never poll for a transient `CLEAN` and race the bot (that triggers "base branch policy prohibits the merge"). Do not merge on a stale status read.
+7. **After merge, verify it landed:** `git checkout main && git pull`, confirm the squash commit is on `main`, and that the **Deploy** workflow (push to `main`) ran green. A merge that doesn't show on `main` + a Deploy run means something went wrong.
+8. **Never `git push origin --delete` a branch manually** (blocked by the safety classifier); `--delete-branch` on merge handles it.
+
+GitHub Actions are pinned to commit SHAs (supply-chain safety) and kept on current, Node-24-compatible versions. When bumping an action, resolve the new SHA with `gh api repos/<owner>/<action>/commits/<tag> --jq .sha` and keep the `# vX.Y.Z` comment.
 
 ## Dependencies
 
