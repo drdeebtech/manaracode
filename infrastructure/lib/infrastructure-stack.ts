@@ -1,6 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import * as budgets from 'aws-cdk-lib/aws-budgets';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 export class ManaracodeStack extends cdk.Stack {
@@ -35,9 +37,13 @@ export class ManaracodeStack extends cdk.Stack {
       allowAllOutbound: true,
     });
 
-    // SSH — currently open to all; restrict to your IP after provisioning:
-    //   ec2.Peer.ipv4('x.x.x.x/32')
-    sg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22),  'SSH (tighten to your IP post-deploy)');
+    // SSH — restrict via context, e.g. `cdk deploy --context sshCidr=203.0.113.4/32`.
+    // Default stays open because the GitHub Actions deploy SSHes in from dynamic
+    // runner IPs; to fully close port 22, move the deploy to SSM Session Manager
+    // (the instance role below already grants AmazonSSMManagedInstanceCore) and
+    // then set sshCidr to your own IP — or drop this rule entirely.
+    const sshCidr: string = this.node.tryGetContext('sshCidr') ?? '0.0.0.0/0';
+    sg.addIngressRule(ec2.Peer.ipv4(sshCidr), ec2.Port.tcp(22), `SSH (${sshCidr})`);
     sg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80),  'HTTP');
     sg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443), 'HTTPS');
 
@@ -45,6 +51,35 @@ export class ManaracodeStack extends cdk.Stack {
     const keyPair = new ec2.KeyPair(this, 'KeyPair', {
       keyPairName: 'manaracode-key',
     });
+
+    // ── Contacts backup bucket (S3) + instance role ────────────────────────
+    // The SQLite contacts DB lives in a Docker volume on the root EBS, so an
+    // instance replacement would lose it. A nightly snapshot to this retained,
+    // versioned bucket means the data survives instance loss (restore on the new
+    // box). RETAIN so `cdk destroy` never deletes lead data; 30-day lifecycle.
+    const backupBucket = new s3.Bucket(this, 'ContactsBackup', {
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+      versioned: true,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      lifecycleRules: [
+        {
+          expiration: cdk.Duration.days(30),
+          noncurrentVersionExpiration: cdk.Duration.days(30),
+        },
+      ],
+    });
+
+    // Instance role: write backups to the bucket + SSM Session Manager access
+    // (no inbound port needed; also the path to eventually close SSH — see #4).
+    const serverRole = new iam.Role(this, 'ServerRole', {
+      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
+      ],
+    });
+    backupBucket.grantPut(serverRole);
 
     // ── Ubuntu 24.04 LTS AMI (resolved per-region via Canonical SSM path) ──
     const ubuntu = ec2.MachineImage.fromSsmParameter(
@@ -76,6 +111,47 @@ export class ManaracodeStack extends cdk.Stack {
       // App directory — deploy-remote.sh expects this path
       'mkdir -p /opt/manaracode',
       'chown ubuntu:ubuntu /opt/manaracode',
+      // AWS CLI for the nightly S3 backup.
+      'DEBIAN_FRONTEND=noninteractive apt-get install -y awscli',
+      // ── #10: nightly SQLite backup to S3 ─────────────────────────────────
+      // Consistent snapshot via sqlite `.backup` from a throwaway container that
+      // mounts the compose data volume (project "manaracode" → volume
+      // manaracode_contacts-data). Skips cleanly until the stack/volume exists.
+      `cat >/usr/local/bin/backup-contacts.sh <<'SCRIPT'
+#!/usr/bin/env bash
+set -euo pipefail
+VOLUME=manaracode_contacts-data
+docker volume inspect "$VOLUME" >/dev/null 2>&1 || { echo "no volume yet"; exit 0; }
+TS=$(date +%F-%H%M%S)
+TMP=$(mktemp)
+docker run --rm -v "$VOLUME":/data alpine:3 sh -c \\
+  'apk add --no-cache sqlite >/dev/null 2>&1 && sqlite3 /data/contacts.db ".backup /data/.bak.db" && cat /data/.bak.db && rm -f /data/.bak.db' > "$TMP"
+aws s3 cp "$TMP" "s3://${backupBucket.bucketName}/contacts-$TS.db.sqlite"
+rm -f "$TMP"
+SCRIPT`,
+      'chmod +x /usr/local/bin/backup-contacts.sh',
+      "echo '17 3 * * * root /usr/local/bin/backup-contacts.sh >> /var/log/backup-contacts.log 2>&1' >/etc/cron.d/manaracode-backup",
+      'chmod 0644 /etc/cron.d/manaracode-backup',
+      // ── #16: bring the stack up on boot (and after `down`) ───────────────
+      `cat >/etc/systemd/system/manaracode.service <<'UNIT'
+[Unit]
+Description=manaracode docker compose stack
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/manaracode
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+
+[Install]
+WantedBy=multi-user.target
+UNIT`,
+      'systemctl daemon-reload',
+      'systemctl enable manaracode.service',
       'echo "=== UserData complete ==="',
     );
 
@@ -87,6 +163,7 @@ export class ManaracodeStack extends cdk.Stack {
       machineImage: ubuntu,
       securityGroup: sg,
       keyPair,
+      role: serverRole,
       userData,
       blockDevices: [{
         deviceName: '/dev/sda1',
@@ -147,6 +224,11 @@ export class ManaracodeStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'PublicIP', {
       value: instance.instancePublicIp,
       description: 'EC2 public IP address',
+    });
+
+    new cdk.CfnOutput(this, 'BackupBucket', {
+      value: backupBucket.bucketName,
+      description: 'S3 bucket holding nightly SQLite contacts backups',
     });
 
     new cdk.CfnOutput(this, 'PublicDNS', {
