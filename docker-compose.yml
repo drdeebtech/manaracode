@@ -28,7 +28,11 @@ services:
       - "127.0.0.1:8000:80"
     depends_on:
       backend:
-        condition: service_healthy
+        # service_started, NOT service_healthy: the SPA is static and must serve
+        # even if the API is degraded (nginx only 502s for /api). Gating the whole
+        # site on backend health let an unhealthy backend block the frontend from
+        # ever updating, freezing production.
+        condition: service_started
     restart: unless-stopped
 
 volumes:
