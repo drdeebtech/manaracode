@@ -113,5 +113,8 @@ func (m *smtpMailer) SendContactNotification(c Contact) error {
 	if err := wc.Close(); err != nil {
 		return fmt.Errorf("smtp close: %w", err)
 	}
-	return client.Quit()
+	if err := client.Quit(); err != nil {
+		return fmt.Errorf("smtp quit: %w", err)
+	}
+	return nil
 }

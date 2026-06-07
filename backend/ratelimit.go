@@ -17,9 +17,10 @@ type ipEntry struct {
 
 // RateLimiter manages per-IP token-bucket limiters (3 requests per minute).
 type RateLimiter struct {
-	mu      sync.Mutex
-	clients map[string]*ipEntry
-	done    chan struct{}
+	mu       sync.Mutex
+	clients  map[string]*ipEntry
+	done     chan struct{}
+	stopOnce sync.Once
 }
 
 func NewRateLimiter() *RateLimiter {
@@ -31,10 +32,10 @@ func NewRateLimiter() *RateLimiter {
 	return rl
 }
 
-// Stop ends the background cleanup goroutine. Call once during shutdown (and in
-// tests) so the goroutine does not leak for the lifetime of the process.
+// Stop ends the background cleanup goroutine. Idempotent — safe to call more
+// than once (the sync.Once guards against a double channel close panic).
 func (rl *RateLimiter) Stop() {
-	close(rl.done)
+	rl.stopOnce.Do(func() { close(rl.done) })
 }
 
 func (rl *RateLimiter) get(ip string) *rate.Limiter {
