@@ -15,7 +15,13 @@ const codeLines = [
 
 const avatarColors = ['bg-blue-400', 'bg-blue-600', 'bg-indigo-500', 'bg-blue-800']
 
-const scrollTo = (id) => () => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
+const scrollTo = (id) => () => {
+  // Honor reduced-motion: the explicit `behavior:'smooth'` would otherwise
+  // override the CSS `scroll-behavior:auto` reduced-motion guard.
+  const reduced =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  document.querySelector(id)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
+}
 
 export default function Hero() {
   return (

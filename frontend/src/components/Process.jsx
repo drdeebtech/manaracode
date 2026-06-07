@@ -61,8 +61,8 @@ export default function Process() {
                 className="relative flex items-start gap-6"
               >
                 <div className="relative z-10 inline-flex shrink-0 items-center justify-center w-16 h-16 bg-surface border-2 border-border rounded-2xl shadow-sm">
-                  <Icon className="w-7 h-7 text-accent" />
-                  <span className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center font-heading">
+                  <Icon className="w-7 h-7 text-accent" aria-hidden="true" />
+                  <span className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-accent text-on-accent text-xs font-bold rounded-full flex items-center justify-center font-heading">
                     {i + 1}
                   </span>
                 </div>

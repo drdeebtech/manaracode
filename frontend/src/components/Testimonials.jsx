@@ -70,7 +70,7 @@ export default function Testimonials() {
                 {/* Stars */}
                 <div className="flex gap-1 mb-5">
                   {Array.from({ length: 5 }).map((_, s) => (
-                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
                   ))}
                 </div>
 
@@ -86,7 +86,7 @@ export default function Testimonials() {
 
               {/* Author */}
               <div className={`flex items-center gap-3 ${featured ? 'lg:w-1/4 lg:shrink-0 mt-6 lg:mt-0' : ''}`}>
-                <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+                <div className={`${featured ? 'w-12 h-12' : 'w-10 h-10'} ${color} rounded-full flex items-center justify-center text-on-accent text-sm font-bold flex-shrink-0`}>
                   {initials}
                 </div>
                 <div>

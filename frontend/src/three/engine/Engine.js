@@ -19,6 +19,7 @@ const GLOW_PAD = 1.6 // glow extends beyond the button
 // canvas 2D context, whose fillStyle getter always serializes to #rrggbb/rgba().
 function cssVarColor(varName, fallback) {
   try {
+    if (!document.body) return fallback
     const probe = document.createElement('span')
     probe.style.color = `var(${varName}, ${fallback})`
     probe.style.display = 'none'

@@ -27,7 +27,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
-                <Code2 className="w-4 h-4 text-white" />
+                <Code2 className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
               <span className="font-heading font-bold text-fg text-lg tracking-tight">manaracode</span>
             </div>
@@ -42,7 +42,7 @@ export default function Footer() {
                   aria-label={label}
                   className="w-11 h-11 bg-surface border border-border hover:opacity-90 rounded-lg flex items-center justify-center transition-opacity duration-200 cursor-pointer"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                 </a>
               ))}
             </div>
