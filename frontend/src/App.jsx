@@ -12,6 +12,18 @@ import Footer from './components/Footer'
 import { ErrorBoundary } from './ui'
 import { SceneCanvas } from './three/SceneCanvas'
 
+// Ordered main sections; each is wrapped in its own ErrorBoundary below. Keys are
+// explicit (not Component.name, which minifies) so React reconciliation is stable.
+const sections = [
+  ['hero', Hero],
+  ['stats', Stats],
+  ['services', Services],
+  ['techstack', TechStack],
+  ['process', Process],
+  ['testimonials', Testimonials],
+  ['cta', CTA],
+]
+
 export default function App() {
   return (
     // reducedMotion="user" makes every framer-motion animation respect
@@ -31,13 +43,15 @@ export default function App() {
         </ErrorBoundary>
         <Navbar />
         <main id="main">
-          <Hero />
-          <Stats />
-          <Services />
-          <TechStack />
-          <Process />
-          <Testimonials />
-          <CTA />
+          {/* Each section is isolated in its own ErrorBoundary: a render-time
+              crash in one section degrades to nothing (fallback={null}) instead
+              of blanking the whole page. This is defense-in-depth alongside the
+              App smoke test. */}
+          {sections.map(([key, Section]) => (
+            <ErrorBoundary key={key} fallback={null}>
+              <Section />
+            </ErrorBoundary>
+          ))}
         </main>
         <Footer />
         {/* Thumb-zone primary CTA, mobile only. On md+ the navbar + hero CTAs are
