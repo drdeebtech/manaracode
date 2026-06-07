@@ -74,7 +74,7 @@ export default function Services() {
               >
                 <div className={featured ? 'lg:w-2/5 lg:shrink-0' : ''}>
                   <div className={`${featured ? 'w-14 h-14' : 'w-12 h-12'} ${iconBg} rounded-xl flex items-center justify-center mb-6`}>
-                    <Icon className={`${featured ? 'w-7 h-7' : 'w-6 h-6'} ${iconColor}`} />
+                    <Icon className={`${featured ? 'w-7 h-7' : 'w-6 h-6'} ${iconColor}`} aria-hidden="true" />
                   </div>
                   <h3 className={`font-heading font-bold text-fg mb-3 ${featured ? 'text-2xl lg:text-3xl lg:mb-0' : 'text-xl'}`}>
                     {title}
