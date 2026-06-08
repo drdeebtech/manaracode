@@ -41,4 +41,6 @@ Because the repository is public, GitHub still allows viewing and forking at the
 platform level; that does not grant any right to use the code. For any use
 beyond reading, please ask first: **contact@manaracode.com**.
 
+Issues and pull requests are not accepted — see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
 © 2026 manaracode. All rights reserved.
