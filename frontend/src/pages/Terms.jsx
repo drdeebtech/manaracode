@@ -8,7 +8,7 @@ export default function Terms() {
   return (
     <LegalPage
       title="Terms of Use"
-      description="The terms that govern your use of the manaracode.com website."
+      path="/terms"
       updated="June 8, 2026"
       intro="These Terms of Use govern your access to and use of manaracode.com. By using this website, you agree to them. If you do not agree, please do not use the site."
     >

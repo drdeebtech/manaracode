@@ -25,10 +25,7 @@ const sections = [
 export default function Home() {
   return (
     <>
-      <PageMeta
-        title="manaracode — software studio for web, mobile & cloud"
-        description="manaracode is a software studio building production web, mobile, and cloud platforms — founded and led by a practising physician, with deep experience in healthcare software."
-      />
+      <PageMeta path="/" />
       {/* Decorative WebGL layer — gated (WebGL + motion + ≥768px + idle), lazy,
           aria-hidden, behind content. A failure here never blanks the page. */}
       <ErrorBoundary fallback={null}>
