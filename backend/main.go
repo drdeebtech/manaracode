@@ -15,10 +15,11 @@ import (
 )
 
 type server struct {
-	store    *Store
-	limiter  *RateLimiter
-	mailer   Mailer
-	inflight sync.WaitGroup // tracks background email sends for graceful drain
+	store     *Store
+	limiter   *RateLimiter
+	mailer    Mailer
+	turnstile tokenVerifier
+	inflight  sync.WaitGroup // tracks background email sends for graceful drain
 }
 
 // newServer wires the application dependencies from configuration: it opens
@@ -30,9 +31,10 @@ func newServer(cfg Config) (*server, error) {
 	}
 	mailer := newMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom, cfg.NotifyTo)
 	return &server{
-		store:   store,
-		limiter: NewRateLimiter(),
-		mailer:  mailer,
+		store:     store,
+		limiter:   NewRateLimiter(),
+		mailer:    mailer,
+		turnstile: newVerifier(cfg.TurnstileSecret),
 	}, nil
 }
 

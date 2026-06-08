@@ -4,13 +4,14 @@ import "os"
 
 // Config holds runtime configuration sourced from the environment.
 type Config struct {
-	DBPath   string
-	SMTPHost string
-	SMTPPort string
-	SMTPUser string
-	SMTPPass string
-	SMTPFrom string
-	NotifyTo string
+	DBPath          string
+	SMTPHost        string
+	SMTPPort        string
+	SMTPUser        string
+	SMTPPass        string
+	SMTPFrom        string
+	NotifyTo        string
+	TurnstileSecret string
 }
 
 // loadConfig reads configuration from the environment, applying the same
@@ -23,12 +24,13 @@ func loadConfig() Config {
 	}
 
 	return Config{
-		DBPath:   dbPath,
-		SMTPHost: os.Getenv("SMTP_HOST"),
-		SMTPPort: os.Getenv("SMTP_PORT"),
-		SMTPUser: os.Getenv("SMTP_USER"),
-		SMTPPass: os.Getenv("SMTP_PASS"),
-		SMTPFrom: os.Getenv("SMTP_FROM"),
-		NotifyTo: os.Getenv("NOTIFY_TO"),
+		DBPath:          dbPath,
+		SMTPHost:        os.Getenv("SMTP_HOST"),
+		SMTPPort:        os.Getenv("SMTP_PORT"),
+		SMTPUser:        os.Getenv("SMTP_USER"),
+		SMTPPass:        os.Getenv("SMTP_PASS"),
+		SMTPFrom:        os.Getenv("SMTP_FROM"),
+		NotifyTo:        os.Getenv("NOTIFY_TO"),
+		TurnstileSecret: os.Getenv("TURNSTILE_SECRET"),
 	}
 }

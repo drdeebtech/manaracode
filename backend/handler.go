@@ -18,6 +18,9 @@ type contactRequest struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
+	// Token is the Cloudflare Turnstile response token from the browser widget.
+	// Verified server-side before the submission is accepted.
+	Token string `json:"turnstile_token"`
 }
 
 // handleContact processes POST /api/contact.
@@ -53,6 +56,19 @@ func (s *server) handleContact(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := mail.ParseAddress(req.Email); err != nil {
 		writeError(w, http.StatusBadRequest, "a valid email address is required")
+		return
+	}
+
+	// Bot defense: verify the Turnstile token before any DB write so automated
+	// submissions never reach the store or the mailer. No-op when unconfigured.
+	switch ok, err := s.turnstile.verify(r.Context(), req.Token, ip); {
+	case err != nil:
+		// Could not reach Cloudflare — fail closed, but signal it's transient.
+		slog.Error("turnstile verify failed", "err", err)
+		writeError(w, http.StatusServiceUnavailable, "could not verify the challenge, please try again")
+		return
+	case !ok:
+		writeError(w, http.StatusForbidden, "challenge verification failed, please complete it and retry")
 		return
 	}
 
