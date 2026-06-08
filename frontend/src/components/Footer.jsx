@@ -1,15 +1,17 @@
+import { Link } from 'react-router-dom'
 import { Code2, Github } from 'lucide-react'
 
+// Section links are rooted at "/" so they work from any route (e.g. /privacy).
 const footerLinks = {
   Services: [
-    { label: 'Tech Solutions', href: '#services' },
-    { label: 'Code Development', href: '#services' },
-    { label: 'Platform Management', href: '#services' },
+    { label: 'Tech Solutions', href: '/#services' },
+    { label: 'Code Development', href: '/#services' },
+    { label: 'Platform Management', href: '/#services' },
   ],
   Company: [
-    { label: 'About Us', href: '#about' },
-    { label: 'Our Process', href: '#process' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'About Us', href: '/#about' },
+    { label: 'Our Process', href: '/#process' },
+    { label: 'Contact', href: '/#contact' },
   ],
 }
 
@@ -70,10 +72,15 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted">© 2025 Manaracode. All rights reserved.</p>
-          {/* Privacy/Terms links removed until the real pages exist — linking to
-              non-existent routes is worse than omitting them. Add back with real
-              hrefs when the legal pages are written. */}
+          <p className="text-sm text-muted">© 2026 Manaracode. All rights reserved.</p>
+          <nav aria-label="Legal" className="flex items-center gap-6">
+            <Link to="/privacy" className="text-sm text-muted hover:text-fg transition-opacity duration-200 cursor-pointer">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="text-sm text-muted hover:text-fg transition-opacity duration-200 cursor-pointer">
+              Terms of Use
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

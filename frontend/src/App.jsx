@@ -1,69 +1,37 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Stats from './components/Stats'
-import Services from './components/Services'
-import TechStack from './components/TechStack'
-import Process from './components/Process'
-import Testimonials from './components/Testimonials'
-import CTA from './components/CTA'
 import Footer from './components/Footer'
-import { ErrorBoundary } from './ui'
-import { SceneCanvas } from './three/SceneCanvas'
-
-// Ordered main sections; each is wrapped in its own ErrorBoundary below. Keys are
-// explicit (not Component.name, which minifies) so React reconciliation is stable.
-const sections = [
-  ['hero', Hero],
-  ['stats', Stats],
-  ['services', Services],
-  ['techstack', TechStack],
-  ['process', Process],
-  ['testimonials', Testimonials],
-  ['cta', CTA],
-]
+import Home from './pages/Home'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
     // reducedMotion="user" makes every framer-motion animation respect
     // prefers-reduced-motion automatically (entrances, whileInView, the blink).
-    <MotionConfig reducedMotion="user">
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-fg focus:shadow-lg"
-      >
-        Skip to content
-      </a>
-      <div className="font-body">
-        {/* Decorative WebGL layer — gated (WebGL + motion + ≥768px + idle), lazy,
-            aria-hidden, behind content. A failure here never blanks the page. */}
-        <ErrorBoundary fallback={null}>
-          <SceneCanvas />
-        </ErrorBoundary>
-        <Navbar />
-        <main id="main">
-          {/* Each section is isolated in its own ErrorBoundary: a render-time
-              crash in one section degrades to nothing (fallback={null}) instead
-              of blanking the whole page. This is defense-in-depth alongside the
-              App smoke test. */}
-          {sections.map(([key, Section]) => (
-            <ErrorBoundary key={key} fallback={null}>
-              <Section />
-            </ErrorBoundary>
-          ))}
-        </main>
-        <Footer />
-        {/* Thumb-zone primary CTA, mobile only. On md+ the navbar + hero CTAs are
-            already reachable; here the hero CTA scrolls off, so keep one fixed. */}
+    <BrowserRouter>
+      <MotionConfig reducedMotion="user">
         <a
-          href="#contact"
-          className="md:hidden fixed bottom-4 left-4 right-4 z-[var(--z-overlay)] inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-accent-warm text-on-accent font-semibold shadow-lg shadow-black/30 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-fg focus:shadow-lg cursor-pointer"
         >
-          Start Your Project
-          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          Skip to content
         </a>
-      </div>
-    </MotionConfig>
+        <div className="font-body">
+          {/* Navbar + Footer are shared chrome on every route; each page renders its
+              own <main id="main"> so the skip link works everywhere. */}
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Footer />
+        </div>
+      </MotionConfig>
+    </BrowserRouter>
   )
 }
