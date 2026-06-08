@@ -31,3 +31,4 @@ infrastructure/.claude-flow/
 .sources/
 .claude/
 .claude-flow/
+.swarm/
