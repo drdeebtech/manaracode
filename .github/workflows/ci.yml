@@ -50,7 +50,7 @@ jobs:
       - name: govulncheck (known Go vulnerabilities)
         working-directory: backend
         run: |
-          go install golang.org/x/vuln/cmd/govulncheck@latest
+          go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
           "$(go env GOPATH)/bin/govulncheck" ./...
 
   lint:
