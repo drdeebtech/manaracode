@@ -178,10 +178,11 @@ UNIT`,
     });
 
     // ── Monthly Budget + email alerts ──────────────────────────────────────
-    // Override limit/email via CDK context:
+    // Set the alert recipient (and optionally the limit) via CDK context:
     //   cdk deploy --context budgetLimitUsd=20 --context budgetAlertEmail=you@example.com
+    // The placeholder default is non-routable on purpose — always pass your own.
     const budgetLimitUsd = Number(this.node.tryGetContext('budgetLimitUsd') ?? 15);
-    const budgetAlertEmail: string = this.node.tryGetContext('budgetAlertEmail') ?? 'dreldeeburo@gmail.com';
+    const budgetAlertEmail: string = this.node.tryGetContext('budgetAlertEmail') ?? 'alerts@example.com';
 
     const alertSubscribers = (email: string) => [{ subscriptionType: 'EMAIL', address: email }];
 

@@ -31,3 +31,6 @@ infrastructure/.claude-flow/
 .claude/skills/*
 !.claude/skills/gstack
 .claude/scheduled_tasks.lock
+
+# Vendored third-party tooling (kept local, not shipped)
+.claude/skills/gstack/
