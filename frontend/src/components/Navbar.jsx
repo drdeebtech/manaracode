@@ -5,11 +5,12 @@ import { Menu, X, Code2 } from 'lucide-react'
 import { EASE } from '../styles/tokens'
 
 // Section links are rooted at "/" so they work from any route (e.g. /privacy):
-// the browser navigates home and scrolls to the anchor.
+// the browser navigates home and scrolls to the anchor. About is a real route
+// (`route: true`), so it renders a client-side <Link> instead of an anchor.
 const links = [
   { label: 'Services', href: '/#services' },
   { label: 'Process', href: '/#process' },
-  { label: 'About', href: '/#about' },
+  { label: 'About', href: '/about', route: true },
   { label: 'Contact', href: '/#contact' },
 ]
 
@@ -43,16 +44,27 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <li key={link.label}>
-              <a
-                href={link.href}
-                className="text-sm font-medium text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {links.map((link) =>
+            link.route ? (
+              <li key={link.label}>
+                <Link
+                  to={link.href}
+                  className="text-sm font-medium text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ) : (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  className="text-sm font-medium text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
+                >
+                  {link.label}
+                </a>
+              </li>
+            )
+          )}
         </ul>
 
         <a
@@ -84,16 +96,27 @@ export default function Navbar() {
             className="md:hidden overflow-hidden border-t border-border px-5 pb-5"
           >
             <div className="pt-4 flex flex-col gap-4">
-              {links.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="flex min-h-[44px] items-center text-sm font-medium text-muted hover:text-fg cursor-pointer"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </a>
-              ))}
+              {links.map((link) =>
+                link.route ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="flex min-h-[44px] items-center text-sm font-medium text-muted hover:text-fg cursor-pointer"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="flex min-h-[44px] items-center text-sm font-medium text-muted hover:text-fg cursor-pointer"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
               <a
                 href="/#contact"
                 className="w-full min-h-[44px] flex items-center justify-center bg-accent-warm text-on-accent text-sm font-semibold rounded-xl text-center transition-opacity duration-200 hover:opacity-90 cursor-pointer"
