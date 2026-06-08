@@ -9,6 +9,7 @@ import { EASE } from '../styles/tokens'
 // (`route: true`), so it renders a client-side <Link> instead of an anchor.
 const links = [
   { label: 'Services', href: '/#services' },
+  { label: 'Work', href: '/work', route: true },
   { label: 'Process', href: '/#process' },
   { label: 'About', href: '/about', route: true },
   { label: 'Contact', href: '/#contact' },
