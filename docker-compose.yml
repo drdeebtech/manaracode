@@ -15,6 +15,9 @@ services:
       - SMTP_PASS=${SMTP_PASS:-}
       - SMTP_FROM=${SMTP_FROM:-}
       - NOTIFY_TO=${NOTIFY_TO:-}
+      # Cloudflare Turnstile secret for contact-form bot verification. When empty
+      # the backend falls back to a no-op verifier (verification disabled).
+      - TURNSTILE_SECRET=${TURNSTILE_SECRET:-}
     healthcheck:
       test: ["CMD", "/server", "-healthcheck"]
       interval: 30s

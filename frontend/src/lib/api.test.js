@@ -15,14 +15,24 @@ describe('postContact', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     const form = { name: 'Jo', email: 'jo@example.com', message: 'hi' }
-    await postContact(form)
+    await postContact(form, 'tok-123')
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const [url, opts] = fetchMock.mock.calls[0]
     expect(url).toBe('/api/contact')
     expect(opts.method).toBe('POST')
     expect(opts.headers['Content-Type']).toBe('application/json')
-    expect(JSON.parse(opts.body)).toEqual(form)
+    expect(JSON.parse(opts.body)).toEqual({ ...form, turnstile_token: 'tok-123' })
+  })
+
+  it('defaults the turnstile token to an empty string when omitted', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await postContact({ name: 'Jo', email: 'jo@example.com', message: 'hi' })
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+    expect(body.turnstile_token).toBe('')
   })
 
   it('returns the raw Response so callers can branch on status', async () => {

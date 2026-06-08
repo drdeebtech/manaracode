@@ -5,18 +5,20 @@
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 /**
- * Submit the contact form to the backend.
+ * Submit the contact form to the backend, including the Cloudflare Turnstile
+ * token for server-side bot verification.
  *
- * Returns the raw Response so callers can branch on status (e.g. 429) exactly
- * as before. Network failures reject, matching `fetch` semantics.
+ * Returns the raw Response so callers can branch on status (e.g. 429, 403)
+ * exactly as before. Network failures reject, matching `fetch` semantics.
  *
  * @param {{ name: string, email: string, message: string }} form
+ * @param {string} [turnstileToken] Turnstile response token (empty if unsolved)
  * @returns {Promise<Response>}
  */
-export function postContact(form) {
+export function postContact(form, turnstileToken = '') {
   return fetch(`${API_BASE}/contact`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(form),
+    body: JSON.stringify({ ...form, turnstile_token: turnstileToken }),
   })
 }

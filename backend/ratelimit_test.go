@@ -68,11 +68,13 @@ func TestRateLimiterRemoveStale(t *testing.T) {
 func TestClientIP(t *testing.T) {
 	tests := []struct {
 		name       string
+		cfIP       string
 		xRealIP    string
 		xForwarded string
 		remoteAddr string
 		want       string
 	}{
+		{name: "CF-Connecting-IP wins over X-Real-IP", cfIP: " 192.0.2.5 ", xRealIP: "192.0.2.10", remoteAddr: "10.0.0.1:5000", want: "192.0.2.5"},
 		{name: "X-Real-IP wins", xRealIP: "  192.0.2.10 ", remoteAddr: "10.0.0.1:5000", want: "192.0.2.10"},
 		{name: "X-Forwarded-For single", xForwarded: "192.0.2.20", remoteAddr: "10.0.0.1:5000", want: "192.0.2.20"},
 		{name: "X-Forwarded-For list takes first", xForwarded: "192.0.2.30, 70.1.2.3", remoteAddr: "10.0.0.1:5000", want: "192.0.2.30"},
@@ -80,6 +82,7 @@ func TestClientIP(t *testing.T) {
 		{name: "RemoteAddr without port returned as-is", remoteAddr: "192.0.2.50", want: "192.0.2.50"},
 		{name: "loopback peer is trusted", xRealIP: "192.0.2.77", remoteAddr: "127.0.0.1:5000", want: "192.0.2.77"},
 		// Security boundary: a public (untrusted) peer cannot spoof its IP via headers.
+		{name: "untrusted peer ignores CF-Connecting-IP", cfIP: "192.0.2.99", remoteAddr: "203.0.113.7:5000", want: "203.0.113.7"},
 		{name: "untrusted peer ignores X-Real-IP", xRealIP: "192.0.2.99", remoteAddr: "203.0.113.7:5000", want: "203.0.113.7"},
 		{name: "untrusted peer ignores X-Forwarded-For", xForwarded: "192.0.2.99", remoteAddr: "8.8.8.8:5000", want: "8.8.8.8"},
 	}
@@ -88,6 +91,9 @@ func TestClientIP(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			r := httptest.NewRequest("POST", "/api/contact", nil)
 			r.RemoteAddr = tc.remoteAddr
+			if tc.cfIP != "" {
+				r.Header.Set("CF-Connecting-IP", tc.cfIP)
+			}
 			if tc.xRealIP != "" {
 				r.Header.Set("X-Real-IP", tc.xRealIP)
 			}

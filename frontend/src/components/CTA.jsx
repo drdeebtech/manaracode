@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Mail, Clock, Shield } from 'lucide-react'
 import { postContact } from '../lib/api'
+import Turnstile from './Turnstile'
 import { Button, Card, Input, Textarea, EmptyState } from '../ui'
 import { EASE } from '../styles/tokens'
 
@@ -13,9 +14,11 @@ const benefits = [
 
 export default function CTA() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [token, setToken] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const turnstileRef = useRef(null)
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -25,21 +28,32 @@ export default function CTA() {
     e.preventDefault()
     setSubmitting(true)
     setError('')
+    let ok = false
     try {
-      const res = await postContact(form)
+      const res = await postContact(form, token)
       if (res.status === 429) {
         setError('Too many requests. Please wait a minute and try again.')
+        return
+      }
+      if (res.status === 403) {
+        setError('Verification failed. Please complete the security check and try again.')
         return
       }
       if (!res.ok) {
         setError('Something went wrong. Please try again.')
         return
       }
+      ok = true
       setSubmitted(true)
     } catch {
       setError('Network error. Please check your connection and try again.')
     } finally {
       setSubmitting(false)
+      // Turnstile tokens are single-use; re-arm the widget for any retry.
+      if (!ok) {
+        setToken('')
+        turnstileRef.current?.reset()
+      }
     }
   }
 
@@ -127,6 +141,13 @@ export default function CTA() {
                     value={form.message}
                     onChange={handleChange}
                     placeholder="We need to build a platform that..."
+                  />
+
+                  <Turnstile
+                    ref={turnstileRef}
+                    onVerify={setToken}
+                    onExpire={() => setToken('')}
+                    onError={() => setToken('')}
                   />
 
                   {error && (

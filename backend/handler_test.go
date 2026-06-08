@@ -39,9 +39,10 @@ func newTestServer(t *testing.T) (*server, *fakeMailer) {
 	t.Helper()
 	fm := &fakeMailer{}
 	srv := &server{
-		store:   newTestStore(t),
-		limiter: NewRateLimiter(),
-		mailer:  fm,
+		store:     newTestStore(t),
+		limiter:   NewRateLimiter(),
+		mailer:    fm,
+		turnstile: noOpVerifier{},
 	}
 	t.Cleanup(srv.limiter.Stop) // end the cleanup goroutine so it doesn't leak per test
 	// Drain any in-flight async email sends before the store (registered earlier by

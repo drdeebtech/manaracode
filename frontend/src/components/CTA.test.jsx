@@ -25,7 +25,18 @@ describe('CTA contact form', () => {
     fillAndSubmit()
 
     expect(await screen.findByText(/message sent/i)).toBeInTheDocument()
-    expect(postContact).toHaveBeenCalledWith({ name: 'Jo', email: 'jo@example.com', message: 'Hello' })
+    // Turnstile never solves in jsdom, so the token is the empty-string default;
+    // the backend is the enforcing layer for the challenge.
+    expect(postContact).toHaveBeenCalledWith({ name: 'Jo', email: 'jo@example.com', message: 'Hello' }, '')
+  })
+
+  it('shows a verification message on a 403 (failed challenge)', async () => {
+    postContact.mockResolvedValue(new Response('', { status: 403 }))
+    render(<CTA />)
+    fillAndSubmit()
+
+    expect(await screen.findByText(/verification failed/i)).toBeInTheDocument()
+    expect(screen.queryByText(/message sent/i)).not.toBeInTheDocument()
   })
 
   it('shows a rate-limit message on 429', async () => {
