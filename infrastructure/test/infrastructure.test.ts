@@ -3,9 +3,11 @@ import { Template, Match } from 'aws-cdk-lib/assertions';
 import { ManaracodeStack } from '../lib/infrastructure-stack';
 
 const ENV = { account: '123456789012', region: 'us-east-1' };
+// budgetAlertEmail is a required context (the stack throws without it).
+const CTX = { budgetAlertEmail: 'ci@example.com' };
 
 describe('ManaracodeStack', () => {
-  const app = new cdk.App();
+  const app = new cdk.App({ context: CTX });
   const stack = new ManaracodeStack(app, 'TestStack', { env: ENV });
   const t = Template.fromStack(stack);
 
@@ -65,7 +67,7 @@ describe('ManaracodeStack', () => {
   });
 
   test('sshCidr context overrides the SSH ingress CIDR (#4)', () => {
-    const app2 = new cdk.App({ context: { sshCidr: '203.0.113.4/32' } });
+    const app2 = new cdk.App({ context: { ...CTX, sshCidr: '203.0.113.4/32' } });
     const t2 = Template.fromStack(new ManaracodeStack(app2, 'OverrideStack', { env: ENV }));
     t2.hasResourceProperties('AWS::EC2::SecurityGroup', {
       SecurityGroupIngress: Match.arrayWith([
@@ -91,5 +93,11 @@ describe('ManaracodeStack', () => {
     expect(userData).toContain('manaracode.service');
     expect(userData).toContain('backup-contacts.sh');
     expect(userData).toContain('manaracode-backup');
+  });
+
+  test('throws when budgetAlertEmail context is missing', () => {
+    expect(
+      () => new ManaracodeStack(new cdk.App(), 'NoEmailStack', { env: ENV }),
+    ).toThrow(/budgetAlertEmail/);
   });
 });
