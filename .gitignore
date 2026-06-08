@@ -24,13 +24,10 @@ infrastructure/.claude-flow/
 .gbrain-source
 .gstack/
 
-# Local agent/skill installs (regenerated per machine; gstack submodule is the
-# tracked shared copy, Supabase skills reproduce from skills-lock.json)
+# Local agent/skill tooling — regenerated per machine (ruflo, gstack,
+# claude-flow, etc.). Not part of the published site; kept local, never shipped
+# to this public repo.
 .agents/
 .sources/
-.claude/skills/*
-!.claude/skills/gstack
-.claude/scheduled_tasks.lock
-
-# Vendored third-party tooling (kept local, not shipped)
-.claude/skills/gstack/
+.claude/
+.claude-flow/
