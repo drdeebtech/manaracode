@@ -76,7 +76,9 @@ const Turnstile = forwardRef(function Turnstile({ onVerify, onExpire, onError },
     }
   }, [])
 
-  return <div ref={containerRef} className="cf-turnstile flex justify-center" aria-hidden="true" />
+  // No aria-hidden: managed mode can present an interactive challenge that
+  // assistive-technology users must be able to reach and complete.
+  return <div ref={containerRef} className="cf-turnstile flex justify-center" />
 })
 
 export default Turnstile
