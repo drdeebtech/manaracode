@@ -126,6 +126,10 @@ jobs:
             grep -v '^IMAGE_TAG=' .env > .env.tmp 2>/dev/null || true
             echo "IMAGE_TAG=${IMAGE_TAG}" >> .env.tmp
             mv .env.tmp .env
+            # .env holds secrets (SMTP_PASS, TURNSTILE_SECRET) — keep it owner-only.
+            # The mv above replaces the file with default (umask) perms each deploy,
+            # so re-assert 600 every time.
+            chmod 600 .env
             echo "Deploying IMAGE_TAG=${IMAGE_TAG}"
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             docker compose pull
