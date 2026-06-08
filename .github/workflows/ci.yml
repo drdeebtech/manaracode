@@ -47,6 +47,11 @@ jobs:
       - name: go test
         working-directory: backend
         run: go test ./...
+      - name: govulncheck (known Go vulnerabilities)
+        working-directory: backend
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          "$(go env GOPATH)/bin/govulncheck" ./...
 
   lint:
     name: Lint (ESLint)
@@ -66,6 +71,9 @@ jobs:
       - name: ESLint
         working-directory: frontend
         run: npm run lint
+      - name: npm audit (production deps, high+)
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
 
   frontend:
     name: Frontend (Vite)
