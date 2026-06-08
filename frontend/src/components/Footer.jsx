@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Code2, Github } from 'lucide-react'
 
 // Section links are rooted at "/" so they work from any route (e.g. /privacy).
+// Entries with `route: true` are real pages and render a client-side <Link>.
 const footerLinks = {
   Services: [
     { label: 'Tech Solutions', href: '/#services' },
@@ -9,7 +10,7 @@ const footerLinks = {
     { label: 'Platform Management', href: '/#services' },
   ],
   Company: [
-    { label: 'About Us', href: '/#about' },
+    { label: 'About Us', href: '/about', route: true },
     { label: 'Our Process', href: '/#process' },
     { label: 'Contact', href: '/#contact' },
   ],
@@ -56,14 +57,23 @@ export default function Footer() {
             <div key={title}>
               <h3 className="font-heading font-semibold text-fg mb-4">{title}</h3>
               <ul className="space-y-3">
-                {links.map(({ label, href }) => (
+                {links.map(({ label, href, route }) => (
                   <li key={label}>
-                    <a
-                      href={href}
-                      className="text-sm text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
-                    >
-                      {label}
-                    </a>
+                    {route ? (
+                      <Link
+                        to={href}
+                        className="text-sm text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
+                      >
+                        {label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={href}
+                        className="text-sm text-muted hover:text-fg transition-opacity duration-200 cursor-pointer"
+                      >
+                        {label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
