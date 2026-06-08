@@ -4,7 +4,7 @@ export default function Privacy() {
   return (
     <LegalPage
       title="Privacy Policy"
-      description="How manaracode collects, uses, and protects the personal data you share through manaracode.com."
+      path="/privacy"
       updated="June 8, 2026"
       intro="This Privacy Policy explains what personal data manaracode (“we”, “us”) collects through manaracode.com, why we collect it, and the choices you have. We collect as little as possible and never sell your data."
     >

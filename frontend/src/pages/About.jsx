@@ -46,11 +46,7 @@ const healthcareWork = [
 export default function About() {
   return (
     <>
-      <PageMeta
-        title="About — a physician-founded software studio · manaracode"
-        description="manaracode is a generalist software studio building production web, mobile, and cloud platforms. Founded and led by a practising physician, healthcare is our sharpest edge."
-        scrollTop
-      />
+      <PageMeta path="/about" scrollTop />
       <main id="main" className="min-h-screen pt-32 pb-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
 

@@ -28,10 +28,12 @@ export function A({ href, children }) {
  * Shared layout for legal pages (Privacy, Terms). Readable typographic column,
  * generous spacing, high contrast — a legal page's job is legibility, not flash.
  */
-export default function LegalPage({ title, description, updated, intro, children }) {
+export default function LegalPage({ title, path, updated, intro, children }) {
   return (
     <>
-      <PageMeta title={`${title} · manaracode`} description={description} scrollTop />
+      {/* Meta comes from the shared routeMeta source of truth via `path`; the
+          visible H1 below stays the short, human title. */}
+      <PageMeta path={path} scrollTop />
       <main id="main" className="min-h-screen pt-32 pb-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
           <h1 className="font-heading text-4xl lg:text-5xl font-bold text-fg mb-3 tracking-tight text-balance">

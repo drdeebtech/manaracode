@@ -68,11 +68,7 @@ const healthcareWork = [
 export default function Work() {
   return (
     <>
-      <PageMeta
-        title="Work — products & clinical platforms · manaracode"
-        description="Selected work from manaracode: public products you can open today, and confidential healthcare platforms described by capability, not by client."
-        scrollTop
-      />
+      <PageMeta path="/work" scrollTop />
       <main id="main" className="min-h-screen pt-32 pb-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
 
