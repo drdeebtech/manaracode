@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Code2 } from 'lucide-react'
 import { EASE } from '../styles/tokens'
 
+// Section links are rooted at "/" so they work from any route (e.g. /privacy):
+// the browser navigates home and scrolls to the anchor.
 const links = [
-  { label: 'Services', href: '#services' },
-  { label: 'Process', href: '#process' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Process', href: '/#process' },
+  { label: 'About', href: '/#about' },
+  { label: 'Contact', href: '/#contact' },
 ]
 
 export default function Navbar() {
@@ -32,12 +35,12 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-        <a href="#main" className="flex items-center gap-2 font-heading font-bold text-fg">
+        <Link to="/" className="flex items-center gap-2 font-heading font-bold text-fg cursor-pointer">
           <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
             <Code2 className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
           <span className="text-lg tracking-tight">manaracode</span>
-        </a>
+        </Link>
 
         <ul className="hidden md:flex items-center gap-8">
           {links.map((link) => (
@@ -53,7 +56,7 @@ export default function Navbar() {
         </ul>
 
         <a
-          href="#contact"
+          href="/#contact"
           className="hidden md:inline-flex items-center px-5 py-2 min-h-[44px] bg-accent-warm text-on-accent text-sm font-semibold rounded-xl transition-opacity duration-200 hover:opacity-90 cursor-pointer"
         >
           Get Started
@@ -92,7 +95,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="#contact"
+                href="/#contact"
                 className="w-full min-h-[44px] flex items-center justify-center bg-accent-warm text-on-accent text-sm font-semibold rounded-xl text-center transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                 onClick={() => setMenuOpen(false)}
               >
