@@ -63,6 +63,11 @@ jobs:
         with:
           context: ./frontend
           push: true
+          # Public Turnstile sitekey, baked in at build time (Vite inlines VITE_*).
+          # Set the repo/Actions secret to a key whose allowed-domains include the
+          # production host; unset falls back to the in-code default.
+          build-args: |
+            VITE_TURNSTILE_SITEKEY=${{ secrets.VITE_TURNSTILE_SITEKEY }}
           # Immutable SHA tag (for pin/rollback) + moving latest.
           tags: |
             ghcr.io/${{ github.repository_owner }}/manaracode-frontend:${{ github.sha }}

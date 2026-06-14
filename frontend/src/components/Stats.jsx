@@ -10,8 +10,10 @@ const capabilities = [
 ]
 
 export default function Stats() {
+  // Capability band: a tight lead-in to Services (same surface), so the two read
+  // as one "what we build" block rather than two sections with a gap between.
   return (
-    <section id="about" aria-label="What Manaracode builds" className="py-20 px-4 sm:px-6 bg-surface">
+    <section id="about" aria-label="What Manaracode builds" className="pt-24 pb-8 px-4 sm:px-6 bg-surface">
       <div className="max-w-7xl mx-auto">
         <motion.div
           variants={revealStagger()}

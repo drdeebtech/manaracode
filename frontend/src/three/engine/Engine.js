@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { getEntries, subscribe } from './registry'
 import { rectToPlacement, orthoFrustum, clampDpr } from './mapping'
 import { createGlowMesh, disposeGlowTextures } from './glow'
+import { createLogoMark, disposeLogoMark } from './logoMark'
 import { getGsap } from './gsapHooks'
 
 // THE single WebGL context for the whole app. One renderer, one scene, one
@@ -49,6 +50,7 @@ export class Engine {
     this.camera = new THREE.OrthographicCamera()
     this.glows = new Map() // registry id -> THREE.Mesh
     this.hero = null
+    this.heroTweens = [] // GSAP tweens to kill on dispose (incl. the infinite spin)
     this.running = false
     this.lastTime = 0
     this.pointer = { x: 0, y: 0 }
@@ -114,25 +116,10 @@ export class Engine {
     const anchor = document.querySelector('[data-three-hero]')
     if (!anchor) return
     const group = new THREE.Group()
-    const geo = new THREE.IcosahedronGeometry(1, 1)
-    const mat = new THREE.MeshStandardMaterial({
-      color: this.accent,
-      roughness: 0.3,
-      metalness: 0.65,
-      flatShading: true,
-      emissive: this.accent,
-      emissiveIntensity: 0.12,
-    })
-    const mesh = new THREE.Mesh(geo, mat)
+    // The hero object IS the brand mark: a two-tone, metallic, extruded "</>"
+    // (accent chevrons, secondary-hue slash) that pops in and slowly spins.
+    const mesh = createLogoMark({ primary: this.accent, secondary: this.accent2 })
     group.add(mesh)
-    // Electric secondary-hue wireframe shell, parented to the mesh so it inherits
-    // the same scale + spin and reads as a single two-tone object (maximalist
-    // depth without a second draw-loop). Slightly larger so the edges float.
-    const wire = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.06, 1),
-      new THREE.MeshBasicMaterial({ color: this.accent2, wireframe: true, transparent: true, opacity: 0.35 }),
-    )
-    mesh.add(wire)
     group.add(new THREE.AmbientLight(0xffffff, 0.6))
     const dir = new THREE.DirectionalLight(0xffffff, 1.1)
     dir.position.set(2, 3, 4)
@@ -144,11 +131,14 @@ export class Engine {
     this.hero = group
     // GSAP owns the 3D entrance + continuous spin (role split: GSAP=timelines).
     // Skip the continuous spin under reduced-motion (the entrance pop is a one-off
-    // and stays); pointer tilt is also gated in tick().
+    // and stays); pointer tilt is also gated in tick(). Tweens are tracked so
+    // dispose() can kill them — the infinite spin would otherwise keep the mesh
+    // referenced (heap leak) for the page's lifetime.
     getGsap().then(({ gsap }) => {
-      gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'expo.out' })
+      if (!this.hero) return // dispose() ran before the async import resolved
+      this.heroTweens.push(gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'expo.out' }))
       if (!this.reduceMotion) {
-        gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 })
+        this.heroTweens.push(gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 }))
       }
     })
   }
@@ -226,14 +216,13 @@ export class Engine {
       mesh.geometry.dispose()
     }
     this.glows.clear()
+    for (const t of this.heroTweens) t.kill() // stop the infinite spin so the mesh can be GC'd
+    this.heroTweens = []
     if (this.hero) {
-      // Dispose the solid mesh and its parented wireframe shell.
-      this.hero.traverse((o) => {
-        if (o.isMesh) {
-          o.geometry.dispose()
-          o.material.dispose()
-        }
-      })
+      // Dispose the logo mark's bar geometries + materials (lights need none).
+      this.scene.remove(this.hero)
+      disposeLogoMark(this.hero.userData.mesh)
+      this.hero = null
     }
     disposeGlowTextures() // free the per-color cached glow textures
     this.renderer.dispose()

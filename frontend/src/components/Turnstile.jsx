@@ -63,6 +63,8 @@ const Turnstile = forwardRef(function Turnstile({ onVerify, onExpire, onError },
           action: 'contact',
           callback: (token) => cbRef.current.onVerify?.(token),
           'expired-callback': () => cbRef.current.onExpire?.(),
+          // Any widget error (e.g. code 110200 = domain not allowed) clears the
+          // token; the parent shows an email fallback rather than trap the user.
           'error-callback': () => cbRef.current.onError?.(),
         })
       })

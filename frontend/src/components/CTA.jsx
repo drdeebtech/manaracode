@@ -18,6 +18,11 @@ export default function CTA() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  // When the Turnstile widget can't initialise (e.g. a misconfigured sitekey
+  // domain — error 110200), no visitor can ever obtain a token and the backend
+  // would reject every submit. Detect that and offer a working email path
+  // instead of trapping the user in a re-verify loop they can't escape.
+  const [widgetDown, setWidgetDown] = useState(false)
   const turnstileRef = useRef(null)
 
   function handleChange(e) {
@@ -145,18 +150,48 @@ export default function CTA() {
 
                   <Turnstile
                     ref={turnstileRef}
-                    onVerify={setToken}
+                    onVerify={(t) => {
+                      setToken(t)
+                      setWidgetDown(false)
+                    }}
                     onExpire={() => setToken('')}
-                    onError={() => setToken('')}
+                    onError={() => {
+                      setToken('')
+                      setWidgetDown(true)
+                    }}
                   />
 
-                  {error && (
+                  {widgetDown && (
+                    <div
+                      role="alert"
+                      className="rounded-xl bg-warning-soft border border-border px-4 py-3 text-sm text-fg"
+                    >
+                      The security check couldn't load. Email us at{' '}
+                      <a
+                        href="mailto:contact@manaracode.com"
+                        className="font-semibold text-accent hover:text-fg underline underline-offset-2 cursor-pointer"
+                      >
+                        contact@manaracode.com
+                      </a>{' '}
+                      and we'll reply within 24 hours.
+                    </div>
+                  )}
+
+                  {error && !widgetDown && (
                     <p role="alert" className="text-xs text-error text-center">
                       {error}
                     </p>
                   )}
 
-                  <Button type="submit" variant="webgl" size="lg" fullWidth loading={submitting} Icon={ArrowRight}>
+                  <Button
+                    type="submit"
+                    variant="webgl"
+                    size="lg"
+                    fullWidth
+                    loading={submitting}
+                    disabled={widgetDown}
+                    Icon={ArrowRight}
+                  >
                     Send Message
                   </Button>
 
