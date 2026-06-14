@@ -5,6 +5,7 @@ import Services from '../components/Services'
 import TechStack from '../components/TechStack'
 import Process from '../components/Process'
 import Testimonials from '../components/Testimonials'
+import WorkTeaser from '../components/WorkTeaser'
 import CTA from '../components/CTA'
 import PageMeta from '../components/PageMeta'
 import { ErrorBoundary } from '../ui'
@@ -19,6 +20,7 @@ const sections = [
   ['techstack', TechStack],
   ['process', Process],
   ['testimonials', Testimonials],
+  ['work', WorkTeaser],
   ['cta', CTA],
 ]
 
