@@ -43,19 +43,19 @@ export default function Hero() {
               variants={revealItem}
               className="font-heading font-bold text-fg tracking-tight leading-[1.04] text-balance mb-6 text-[clamp(2.75rem,1.2rem+5vw,5rem)]"
             >
-              Build Smarter.
+              We build it.
               <br />
-              <span className="text-accent">Scale Faster.</span>
+              We ship it.
               <br />
-              Deliver Better.
+              <span className="text-accent">We run it.</span>
             </motion.h1>
 
             <motion.p
               variants={revealItem}
-              className="text-lg text-muted leading-relaxed mb-8 max-w-lg"
+              className="text-lg text-muted leading-relaxed mb-8 max-w-lg text-pretty"
             >
-              Manaracode builds and runs software end to end, from custom web and mobile apps
-              to the platforms and infrastructure that keep them online.
+              Web, mobile, APIs, and the cloud infrastructure they sit on, owned from the
+              first commit through every release after launch.
             </motion.p>
 
             <motion.div variants={revealItem} className="flex flex-wrap gap-4 mb-10">

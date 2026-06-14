@@ -10,11 +10,12 @@ describe('App smoke render', () => {
   it('renders every section without crashing', () => {
     render(<App />)
 
-    expect(screen.getByRole('heading', { level: 1, name: /build smarter/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /we build it/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /services that drive growth/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /technologies we master/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /our process/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /what you can expect/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /things we.?ve shipped/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /ready to build something great/i })).toBeInTheDocument()
   })
 

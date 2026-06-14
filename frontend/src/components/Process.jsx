@@ -38,7 +38,7 @@ export default function Process() {
             Our Process
           </h2>
           <p className="text-lg text-muted max-w-2xl leading-relaxed">
-            A transparent, repeatable framework that consistently delivers exceptional results.
+            The same transparent steps on every project, from the first call to launch and beyond.
           </p>
         </motion.div>
 
