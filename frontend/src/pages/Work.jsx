@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
-  BookOpen,
-  Smartphone,
-  Cpu,
   ScanLine,
   CalendarClock,
   Video,
@@ -12,38 +9,8 @@ import {
   Lock,
 } from 'lucide-react'
 import PageMeta from '../components/PageMeta'
+import { publicProjects } from '../content/projects'
 import { reveal, revealStagger, revealItem } from '../styles/tokens'
-
-// Public, shipped projects — sourced from public repo metadata only (no private
-// code, clients, or invented features). Every claim here is truthful and
-// verifiable from the linked destination. Add screenshots / richer copy as it
-// becomes available; keep it accurate.
-const publicProjects = [
-  {
-    Icon: BookOpen,
-    title: 'Furqan',
-    tags: ['Web', 'TypeScript'],
-    body: 'A production web platform for an online Quran academy, live and serving users.',
-    href: 'https://furqan.today',
-    linkLabel: 'Visit furqan.today',
-  },
-  {
-    Icon: Smartphone,
-    title: 'Hesn',
-    tags: ['Mobile', 'Flutter'],
-    body: 'A mobile app for daily azkar — Islamic remembrances and supplications.',
-    href: 'https://github.com/drdeebtech/Hesn',
-    linkLabel: 'View source',
-  },
-  {
-    Icon: Cpu,
-    title: 'RAM-Watch',
-    tags: ['Web', 'Cross-platform'],
-    body: 'A lightweight web app for monitoring and managing system memory across platforms.',
-    href: 'https://github.com/drdeebtech/RAM-Watch',
-    linkLabel: 'View source',
-  },
-]
 
 // Clinical engagements are confidential — described by capability only, never by
 // client, institution, or patient. No names, no metrics, nothing identifying.
