@@ -54,8 +54,8 @@ export default function Hero() {
               variants={revealItem}
               className="text-lg text-muted leading-relaxed mb-8 max-w-lg"
             >
-              Manaracode delivers end-to-end tech solutions — from custom software development
-              to full platform management — so your business stays ahead of the curve.
+              Manaracode builds and runs software end to end, from custom web and mobile apps
+              to the platforms and infrastructure that keep them online.
             </motion.p>
 
             <motion.div variants={revealItem} className="flex flex-wrap gap-4 mb-10">

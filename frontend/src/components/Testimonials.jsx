@@ -8,7 +8,7 @@ import { reveal, revealStagger, revealItem } from '../styles/tokens'
 const principles = [
   { Icon: ShieldCheck, title: 'Clean, tested code', desc: 'Typed, reviewed, and covered by tests before it ships.' },
   { Icon: Workflow, title: 'Transparent process', desc: 'Clear scope, regular check-ins, and no surprises.' },
-  { Icon: Clock, title: 'Fast response', desc: 'We get back to you within 24 hours — every time.' },
+  { Icon: Clock, title: 'Fast response', desc: 'We reply to every enquiry within 24 hours.' },
   { Icon: KeyRound, title: 'No lock-in', desc: 'You own the code and the infrastructure, start to finish.' },
 ]
 
@@ -25,24 +25,23 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
+        {/* Editorial 2-up list, not a four-card clone grid: a hairline top rule
+            sets the rhythm and the icon sits inline with the title, so this row
+            reads distinctly from the filled Services bento above it. */}
         <motion.div
           variants={revealStagger()}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-x-12 gap-y-10 sm:grid-cols-2"
         >
           {principles.map(({ Icon, title, desc }) => (
-            <motion.div
-              key={title}
-              variants={revealItem}
-              className="bg-surface rounded-2xl p-8 shadow-sm border border-border"
-            >
-              <div className="w-12 h-12 bg-accent-soft rounded-xl flex items-center justify-center mb-6">
-                <Icon className="w-6 h-6 text-accent" aria-hidden="true" />
+            <motion.div key={title} variants={revealItem} className="pt-6 border-t border-border">
+              <div className="flex items-center gap-3 mb-3">
+                <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                <h3 className="font-heading text-xl font-bold text-fg">{title}</h3>
               </div>
-              <h3 className="font-heading text-lg font-bold text-fg mb-2">{title}</h3>
-              <p className="text-muted text-base leading-relaxed">{desc}</p>
+              <p className="text-muted text-base leading-relaxed max-w-md">{desc}</p>
             </motion.div>
           ))}
         </motion.div>
