@@ -50,6 +50,7 @@ export class Engine {
     this.camera = new THREE.OrthographicCamera()
     this.glows = new Map() // registry id -> THREE.Mesh
     this.hero = null
+    this.heroTweens = [] // GSAP tweens to kill on dispose (incl. the infinite spin)
     this.running = false
     this.lastTime = 0
     this.pointer = { x: 0, y: 0 }
@@ -130,11 +131,14 @@ export class Engine {
     this.hero = group
     // GSAP owns the 3D entrance + continuous spin (role split: GSAP=timelines).
     // Skip the continuous spin under reduced-motion (the entrance pop is a one-off
-    // and stays); pointer tilt is also gated in tick().
+    // and stays); pointer tilt is also gated in tick(). Tweens are tracked so
+    // dispose() can kill them — the infinite spin would otherwise keep the mesh
+    // referenced (heap leak) for the page's lifetime.
     getGsap().then(({ gsap }) => {
-      gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'expo.out' })
+      if (!this.hero) return // dispose() ran before the async import resolved
+      this.heroTweens.push(gsap.to(group.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'expo.out' }))
       if (!this.reduceMotion) {
-        gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 })
+        this.heroTweens.push(gsap.to(mesh.rotation, { y: Math.PI * 2, duration: 18, ease: 'none', repeat: -1 }))
       }
     })
   }
@@ -212,9 +216,13 @@ export class Engine {
       mesh.geometry.dispose()
     }
     this.glows.clear()
+    for (const t of this.heroTweens) t.kill() // stop the infinite spin so the mesh can be GC'd
+    this.heroTweens = []
     if (this.hero) {
       // Dispose the logo mark's bar geometries + materials (lights need none).
+      this.scene.remove(this.hero)
       disposeLogoMark(this.hero.userData.mesh)
+      this.hero = null
     }
     disposeGlowTextures() // free the per-color cached glow textures
     this.renderer.dispose()

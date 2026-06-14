@@ -41,12 +41,14 @@ export default function LogoMark3D({ animate = true, fallback = null }) {
     let onMove
     let onEnter
     let onLeave
+    let onVisibility
 
     const teardownListeners = () => {
       ro?.disconnect()
       if (onMove) window.removeEventListener('pointermove', onMove)
       if (onEnter) canvas.removeEventListener('pointerenter', onEnter)
       if (onLeave) canvas.removeEventListener('pointerleave', onLeave)
+      if (onVisibility) document.removeEventListener('visibilitychange', onVisibility)
       canvas.removeEventListener('webglcontextlost', onLost)
     }
 
@@ -85,6 +87,9 @@ export default function LogoMark3D({ animate = true, fallback = null }) {
         renderer.setSize(w, h, false)
         camera.aspect = w / h
         camera.updateProjectionMatrix()
+        // A resize invalidates the framebuffer; the static (reduced-motion)
+        // frame has no RAF loop to repaint it, so redraw it here.
+        if (!animate) renderer.render(scene, camera)
       }
       size()
 
@@ -126,7 +131,23 @@ export default function LogoMark3D({ animate = true, fallback = null }) {
           mark.rotation.x += (pointer.y * 0.35 - mark.rotation.x) * k
           renderOnce()
         }
-        raf = requestAnimationFrame(tick)
+        // Always paint one frame up front so a mount in a hidden/background tab
+        // isn't a blank chip until focus (the loop below may not start yet).
+        mark.rotation.set(-0.18, 0.5, 0)
+        renderOnce()
+        // Pause the loop while the tab is hidden so this foreground canvas
+        // doesn't burn GPU on every desktop page (mirrors Engine.onVisibility).
+        onVisibility = () => {
+          if (document.hidden) {
+            if (raf) cancelAnimationFrame(raf)
+            raf = 0
+          } else if (!raf) {
+            last = performance.now()
+            raf = requestAnimationFrame(tick)
+          }
+        }
+        document.addEventListener('visibilitychange', onVisibility)
+        if (!document.hidden) raf = requestAnimationFrame(tick)
       }
 
       return () => {
