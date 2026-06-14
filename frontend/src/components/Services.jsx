@@ -7,7 +7,7 @@ const services = [
     Icon: Lightbulb,
     title: 'Tech Solutions',
     description:
-      'Strategic technology consulting and end-to-end implementation tailored to your business goals. We solve complex problems with scalable, future-proof tech.',
+      'Strategic technology consulting and end-to-end implementation, turning complex problems into systems that scale as you grow.',
     tags: ['Consulting', 'Architecture', 'Strategy'],
     bg: 'bg-bg',
     iconBg: 'bg-accent-soft',
@@ -17,7 +17,7 @@ const services = [
     Icon: Code2,
     title: 'Code Development',
     description:
-      'Custom web applications, mobile apps, and APIs built with modern stacks. Clean code, fully tested, and shipped on time — every time.',
+      'Custom web applications, mobile apps, and APIs built with modern stacks. Clean code, fully tested, and shipped on the date we commit to.',
     tags: ['Web Apps', 'Mobile', 'APIs'],
     bg: 'bg-bg',
     iconBg: 'bg-accent-soft',
@@ -27,11 +27,11 @@ const services = [
     Icon: Settings,
     title: 'Platform Management',
     description:
-      'Full-cycle platform operations — deployment, monitoring, scaling, and ongoing support. We keep your systems running at peak performance.',
+      'Full-cycle platform operations: deployment, monitoring, scaling, and ongoing support that keeps your systems fast and online.',
     tags: ['DevOps', 'Monitoring', 'Support'],
-    bg: 'bg-success-soft',
-    iconBg: 'bg-success-soft',
-    iconColor: 'text-success',
+    bg: 'bg-bg',
+    iconBg: 'bg-accent-soft',
+    iconColor: 'text-accent',
   },
 ]
 
