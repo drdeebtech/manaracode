@@ -1,0 +1,10 @@
+# Default owner for everything in the repo.
+# Required reviewers are enforced via branch protection on main.
+*                       @drdeeb
+
+# Area owners (same maintainer today; split out as the team grows).
+/frontend/              @drdeeb
+/backend/               @drdeeb
+/infrastructure/        @drdeeb
+/.github/               @drdeeb
+/docker-compose.yml     @drdeeb
