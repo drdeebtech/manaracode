@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Code2 } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { EASE } from '../styles/tokens'
+import BrandLogo from './BrandLogo'
 
 // Section links are rooted at "/" so they work from any route (e.g. /privacy):
 // the browser navigates home and scrolls to the anchor. About is a real route
@@ -38,9 +39,7 @@ export default function Navbar() {
     >
       <nav className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-heading font-bold text-fg cursor-pointer">
-          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
-            <Code2 className="w-4 h-4 text-white" aria-hidden="true" />
-          </div>
+          <BrandLogo />
           <span className="text-lg tracking-tight">manaracode</span>
         </Link>
 

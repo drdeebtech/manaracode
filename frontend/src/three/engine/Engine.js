@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { getEntries, subscribe } from './registry'
 import { rectToPlacement, orthoFrustum, clampDpr } from './mapping'
 import { createGlowMesh, disposeGlowTextures } from './glow'
+import { createLogoMark, disposeLogoMark } from './logoMark'
 import { getGsap } from './gsapHooks'
 
 // THE single WebGL context for the whole app. One renderer, one scene, one
@@ -114,25 +115,10 @@ export class Engine {
     const anchor = document.querySelector('[data-three-hero]')
     if (!anchor) return
     const group = new THREE.Group()
-    const geo = new THREE.IcosahedronGeometry(1, 1)
-    const mat = new THREE.MeshStandardMaterial({
-      color: this.accent,
-      roughness: 0.3,
-      metalness: 0.65,
-      flatShading: true,
-      emissive: this.accent,
-      emissiveIntensity: 0.12,
-    })
-    const mesh = new THREE.Mesh(geo, mat)
+    // The hero object IS the brand mark: a two-tone, metallic, extruded "</>"
+    // (accent chevrons, secondary-hue slash) that pops in and slowly spins.
+    const mesh = createLogoMark({ primary: this.accent, secondary: this.accent2 })
     group.add(mesh)
-    // Electric secondary-hue wireframe shell, parented to the mesh so it inherits
-    // the same scale + spin and reads as a single two-tone object (maximalist
-    // depth without a second draw-loop). Slightly larger so the edges float.
-    const wire = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.06, 1),
-      new THREE.MeshBasicMaterial({ color: this.accent2, wireframe: true, transparent: true, opacity: 0.35 }),
-    )
-    mesh.add(wire)
     group.add(new THREE.AmbientLight(0xffffff, 0.6))
     const dir = new THREE.DirectionalLight(0xffffff, 1.1)
     dir.position.set(2, 3, 4)
@@ -227,13 +213,8 @@ export class Engine {
     }
     this.glows.clear()
     if (this.hero) {
-      // Dispose the solid mesh and its parented wireframe shell.
-      this.hero.traverse((o) => {
-        if (o.isMesh) {
-          o.geometry.dispose()
-          o.material.dispose()
-        }
-      })
+      // Dispose the logo mark's bar geometries + materials (lights need none).
+      disposeLogoMark(this.hero.userData.mesh)
     }
     disposeGlowTextures() // free the per-color cached glow textures
     this.renderer.dispose()
