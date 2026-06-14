@@ -131,6 +131,10 @@ export default function LogoMark3D({ animate = true, fallback = null }) {
           mark.rotation.x += (pointer.y * 0.35 - mark.rotation.x) * k
           renderOnce()
         }
+        // Always paint one frame up front so a mount in a hidden/background tab
+        // isn't a blank chip until focus (the loop below may not start yet).
+        mark.rotation.set(-0.18, 0.5, 0)
+        renderOnce()
         // Pause the loop while the tab is hidden so this foreground canvas
         // doesn't burn GPU on every desktop page (mirrors Engine.onVisibility).
         onVisibility = () => {

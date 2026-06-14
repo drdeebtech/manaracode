@@ -48,7 +48,10 @@ export default function BrandLogo() {
   // Defer the `three` chunk to first idle so it never races initial paint
   // (mirrors SceneCanvas) — the FallbackIcon shows until then.
   useEffect(() => {
-    if (supported !== true || !wide) return undefined
+    if (supported !== true || !wide) {
+      setReady(false) // re-defer to idle if gating turns back on later
+      return undefined
+    }
     const idle = window.requestIdleCallback
       ? window.requestIdleCallback(() => setReady(true))
       : window.setTimeout(() => setReady(true), 200)
