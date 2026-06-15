@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Stethoscope, Code2, Layers, ShieldCheck, ArrowRight } from 'lucide-react'
 import PageMeta from '../components/PageMeta'
+import StructuredData from '../components/StructuredData'
 import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
 // ── Founder ────────────────────────────────────────────────────────────────
@@ -47,6 +48,7 @@ export default function About() {
   return (
     <>
       <PageMeta path="/about" scrollTop />
+      <StructuredData path="/about" />
       <main id="main" className="min-h-screen pt-32 pb-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
 
@@ -174,6 +176,7 @@ export default function About() {
               {FOUNDER.photo && (
                 <img
                   src={FOUNDER.photo}
+                  loading="lazy"
                   alt={FOUNDER.name ? `${FOUNDER.name}, ${FOUNDER.role}` : 'Founder of manaracode'}
                   width={112}
                   height={112}

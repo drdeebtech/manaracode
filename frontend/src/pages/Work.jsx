@@ -9,6 +9,7 @@ import {
   Lock,
 } from 'lucide-react'
 import PageMeta from '../components/PageMeta'
+import StructuredData from '../components/StructuredData'
 import { publicProjects } from '../content/projects'
 import { reveal, revealStagger, revealItem } from '../styles/tokens'
 
@@ -36,6 +37,7 @@ export default function Work() {
   return (
     <>
       <PageMeta path="/work" scrollTop />
+      <StructuredData path="/work" />
       <main id="main" className="min-h-screen pt-32 pb-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
 
