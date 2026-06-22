@@ -4,7 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`manaracode` is a frontend/UI project using `framer-motion` for animations. No framework has been committed yet — when one is chosen, update this file accordingly.
+`manaracode` is the studio's site: a React 18 + Vite 6 SPA (`framer-motion` +
+a lazy, optional Three.js layer) talking to a small Go API, fronted by nginx and
+deployed on AWS via CDK + Docker.
+
+### Repo map — where things live
+
+| Path | What |
+|------|------|
+| `frontend/` | React + Vite SPA (`src/pages`, `src/components`, `src/ui` primitives, `src/three` 3D layer, `src/seo`) |
+| `backend/` | Go API — one real endpoint, `POST /api/contact` (+ `/healthz`) |
+| `infrastructure/` | AWS CDK (TypeScript) + Docker + nginx config |
+| `design-system/` | UI/UX source of truth (`manaracode/MASTER.md`) |
+| `docs/CODEMAPS/` | Generated per-area code index (regenerate with `/update-codemaps` after structural changes) |
+
+### Read on demand (don't load unless needed — keeps context cheap)
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — system map + the 3 non-obvious flows
+  (contact→email, 3D lifecycle, SEO/prerender) + tech-choice rationale. **Read
+  this first when changing how parts connect.**
+- **[design-system/manaracode/MASTER.md](design-system/manaracode/MASTER.md)** — tokens, palettes, motion rules.
+- **[SECURITY.md](SECURITY.md)** — supply-chain + secret perimeter rules.
+- **[docs/CODEMAPS/](docs/CODEMAPS/)** — compressed file/symbol index.
 
 ## Pull Request Review (mandatory)
 

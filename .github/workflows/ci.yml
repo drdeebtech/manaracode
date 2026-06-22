@@ -44,9 +44,16 @@ jobs:
       - name: go build
         working-directory: backend
         run: go build ./...
-      - name: go test
+      - name: go test (with coverage gate)
         working-directory: backend
-        run: go test ./...
+        run: |
+          go test -coverprofile=coverage.out ./...
+          total=$(go tool cover -func=coverage.out | awk '/^total:/ {print $3}' | tr -d '%')
+          echo "total statement coverage: ${total}%"
+          # Regression floor, just below the current baseline (~76.9%). Raise
+          # toward 80% as backend tests are added.
+          floor=75
+          awk -v t="$total" -v f="$floor" 'BEGIN { if (t+0 < f+0) { printf "coverage %.1f%% is below the %d%% floor\n", t, f; exit 1 } }'
       - name: govulncheck (known Go vulnerabilities)
         working-directory: backend
         run: |
@@ -90,6 +97,9 @@ jobs:
       - name: Install deps
         working-directory: frontend
         run: npm ci
+      - name: Test + coverage gate
+        working-directory: frontend
+        run: npm run test:coverage
       - name: Build
         working-directory: frontend
         run: npm run build
