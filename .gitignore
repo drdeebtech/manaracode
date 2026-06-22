@@ -9,6 +9,10 @@ backend/manaracode-backend
 # Vite dev cache
 .vite/
 
+# Test coverage artifacts
+frontend/coverage/
+backend/coverage.out
+
 # SQLite (local dev stray files — production DB lives in a named Docker volume)
 *.db
 backend/data/
