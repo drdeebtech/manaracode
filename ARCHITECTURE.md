@@ -8,7 +8,7 @@ behind the stack. For day-to-day rules (PR flow, deploy, UI checklist) see
 
 ## System map
 
-```
+```text
 Browser ── React SPA (frontend/, Vite) ──HTTP /api──▶ Go API (backend/)
               │                                          │
               │ build step                               ├─ SQLite (store.go)

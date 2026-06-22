@@ -34,7 +34,7 @@ static HTML after `vite build`.
 | File | Public surface | What's there |
 |------|----------------|--------------|
 | `main.go` | `main`, `run`, `serve`, `newServer` | Entry, ServeMux (`POST /api/contact`, `GET /healthz`), graceful shutdown |
-| `handler.go` | `handleContact` | Validate → rate-limit → Turnstile → store → async email |
+| `handler.go` | `handleContact` | Rate-limit → validate → Turnstile → store → async email |
 | `ratelimit.go` | `RateLimiter`, `Allow` | Per-IP limiter |
 | `turnstile.go` | `tokenVerifier`, `verify` | Cloudflare bot verify, fail-closed |
 | `mailer.go` | `Mailer`, `SendContactNotification` | SMTP send (or no-op) |
